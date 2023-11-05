@@ -87,6 +87,27 @@ Model   *door;
 Model   *moon;
 Model   *gridMesh;
 
+/*CÓDIGO DE ZELENE
+Model* arena;
+Model* mangle;
+Model* estrella;
+Model* manati;
+Model* florLoto;
+Model* cocodrilo;
+Model* medusa;
+Model* bolsaPlastico;
+Model* lataCoca;
+Model* lataFanta;
+Model* lataSprite;
+Model* flamingo;
+Model* tortuga;
+Model* agua;
+Model* ostra;
+Model* nenufar;
+Model* cubeenv;
+Model* cangrejo;
+*/
+
 float tradius = 10.0f;
 float theta = 0.0f;
 float alpha = 0.0f;
@@ -189,6 +210,27 @@ bool Start() {
 	gridMesh = new Model("models/IllumModels/grid.fbx");
 
 	character = new Model("models/IllumModels/Monigote.fbx");
+
+
+	/*CÓDIGO DE ZELENE
+	////////////// M O D E L O S ///////////////////////////
+	//MANGLE
+	arena = new Model("models/arena/arena.fbx");
+	mangle = new Model("models/mangle/mangle.fbx");
+	lataCoca = new Model("models/lataCoca/lataCoca.fbx");
+	lataFanta = new Model("models/lataCoca/lataFanta.fbx");
+	lataSprite = new Model("models/lataCoca/lataSprite.fbx");
+	ostra = new Model("models/ostra/ostra.fbx");
+	cocodrilo = new Model("models/cocodrilo/cocodrilo.fbx");
+	estrella = new Model("models/estrella/estrella.fbx");
+	flamingo = new Model("models/flamingo/flamingo.fbx");
+	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
+
+	//nenufar = new Model("models/nenufar/nenufar.fbx");
+	//agua = new Model("models/agua/agua.fbx");
+	*/
+
+
 
 	// Cubemap
 	vector<std::string> faces
@@ -382,6 +424,10 @@ bool Update() {
 	}
 
 	glUseProgram(0);
+
+
+	/*CREO QUE AQUI VA EL BLOQUE CORRESPONDIENTE A MANGLAR, revisar con Zelene*/
+
 
 
 	// Actividad 5.2
