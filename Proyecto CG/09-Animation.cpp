@@ -87,7 +87,7 @@ Model   *door;
 Model   *moon;
 Model   *gridMesh;
 
-/*CÓDIGO DE ZELENE
+/*CÓDIGO DE ZELENE :)
 Model* arena;
 Model* mangle;
 Model* estrella;
