@@ -10,10 +10,10 @@ in vec3 Normal_cameraspace;
 
 uniform sampler2D texture_diffuse1;
 
-uniform vec4 LightColor;    //Color de la fuente
-uniform vec4 LightPower;    //Potencia de a fuente
-uniform int  alphaIndex;    //q
-uniform float distance;     //r
+uniform vec4 LightColor;
+uniform vec4 LightPower;
+uniform int  alphaIndex;
+uniform float distance;
 
 uniform vec4 MaterialAmbientColor;
 uniform vec4 MaterialDiffuseColor;
@@ -46,6 +46,5 @@ void main()
                     
     ex_color.a = transparency;
 
-    //FragColor = texel * ex_color;
-    FragColor = ex_color;
+    FragColor = texel * ex_color;
 }

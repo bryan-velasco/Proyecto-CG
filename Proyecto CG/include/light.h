@@ -19,12 +19,12 @@ public:
 	float     distance;
 
 	Light() {
-		Position = glm::vec3(0.0f, 0.0f, 0.0f); // Posición de la fuente de luz
+		Position = glm::vec3(0.0f, 5.0f, 0.0f); // Posición de la fuente de luz
 		Direction = glm::vec3(1.0f, 0.0f, 0.0f); // Dirección (no aplica para fuentes puntuales)
 		Color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Color de la fuente de luz
 		Power = glm::vec4(60.0f, 60.0f, 60.0f, 1.0f); // Potencia en Watts
-		alphaIndex = 10; // potencia del brillo especular
-		distance = 3.0f;
+		alphaIndex = 10.0; // potencia del brillo especular
+		distance = 5.0f;
 	}
 	~Light() {}
 
