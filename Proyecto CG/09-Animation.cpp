@@ -1,6 +1,6 @@
 /*
 * Laboratorio de Computación Gráfica e Interacción Humano-Computadora
-* 09 - Animación
+* 06 - Texturizado
 */
 
 #include <iostream>
@@ -25,9 +25,11 @@
 #include <material.h>
 #include <light.h>
 #include <cubemap.h>
+#include <particles.h>
 
 #include <irrKlang.h>
 using namespace irrklang;
+
 
 // Max number of bones
 #define MAX_RIGGING_BONES 100
@@ -40,7 +42,7 @@ bool Update();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow* window);
 
 // Gobals
 GLFWwindow* window;
@@ -64,30 +66,36 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float elapsedTime = 0.0f;
 
-float sineTime = 0.0f;
-
-glm::vec3 position(0.0f,0.0f, 0.0f);
-glm::vec3 forwardView(0.0f, 0.0f, 1.0f);
-float     scaleV = 0.005f;
 float     rotateCharacter = 0.0f;
-float	  door_offset = 0.0f;
-float	  door_rotation = 0.0f;
+glm::vec3 position(0.0f, 0.0f, 0.0f);
+glm::vec3 forwardView(0.0f, 0.0f, 1.0f);
+
+float     scaleV = 0.005f;
+
 
 // Shaders
-Shader *ourShader;
+Shader* ourShader;
+Shader* staticShader;
 Shader *cubemapShader;
-Shader *mLightsShader;
-Shader *proceduralShader;
-Shader *wavesShader;
+Shader* particlesShader;
+
+// Partículas
+Particles particlesSystem(50); // creamos 200 partículas
 
 // Carga la información del modelo
-Model	*character;
-Model	*house;
-Model   *door;
-Model   *moon;
-Model   *gridMesh;
+Model *particleModel;
 
-/*CÓDIGO DE ZELENE :)
+float tradius = 10.0f;
+float theta = 0.0f;
+float alpha = 0.0f;
+
+// Cubemap
+CubeMap* mainCubeMap;
+
+// Audio
+ISoundEngine* SoundEngine = createIrrKlangDevice();
+
+// Carga la información del modelo
 Model* arena;
 Model* mangle;
 Model* estrella;
@@ -106,35 +114,14 @@ Model* ostra;
 Model* nenufar;
 Model* cubeenv;
 Model* cangrejo;
-*/
-
-float tradius = 10.0f;
-float theta = 0.0f;
-float alpha = 0.0f;
-
-// Cubemap
-CubeMap *mainCubeMap;
-
-// Materiales
-Material material01;
-
-// Light gLight;
-std::vector<Light> gLights;
-Light    lightMoon;
 
 // Pose inicial del modelo
 glm::mat4 gBones[MAX_RIGGING_BONES];
 glm::mat4 gBonesBar[MAX_RIGGING_BONES];
 
-float	fps = 0.0f;
+float	fps = 30.0f;
 int		keys = 0;
 int		animationCount = 0;
-
-float proceduralTime = 0.0f;
-float wavesTime = 0.0f;
-
-// Audio
-ISoundEngine *SoundEngine = createIrrKlangDevice();
 
 // selección de cámara
 bool    activeCamera = 1; // activamos la primera cámara
@@ -152,9 +139,15 @@ int main()
 			break;
 	}
 
+	// Loop de renderizado
+	while (!glfwWindowShouldClose(window))
+	{
+
+	}
+
+	// glfw: Terminamos el programa y liberamos memoria
 	glfwTerminate();
 	return 0;
-
 }
 
 bool Start() {
@@ -192,11 +185,12 @@ bool Start() {
 	glEnable(GL_DEPTH_TEST);
 
 	// Compilación y enlace de shaders
-	ourShader     = new Shader("shaders/10_vertex_skinning-IT.vs", "shaders/10_fragment_skinning-IT.fs");
+	ourShader = new Shader("shaders/10_vertex_skinning-IT.vs", "shaders/10_fragment_skinning-IT.fs");
+	staticShader = new Shader("shaders/10_vertex_simple.vs", "shaders/10_fragment_simple.fs");
 	cubemapShader = new Shader("shaders/10_vertex_cubemap.vs", "shaders/10_fragment_cubemap.fs");
-	mLightsShader = new Shader("shaders/11_PhongShaderMultLights.vs", "shaders/11_PhongShaderMultLights.fs");
-	proceduralShader = new Shader("shaders/12_ProceduralAnimation.vs", "shaders/12_ProceduralAnimation.fs");
-	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
+	particlesShader = new Shader("shaders/13_particles.vs", "shaders/13_particles.fs");
+
+	particleModel = new Model("models/snow/burbuja.fbx");
 
 	// Máximo número de huesos: 100
 	ourShader->setBonesIDs(MAX_RIGGING_BONES);
@@ -204,15 +198,7 @@ bool Start() {
 	// Dibujar en malla de alambre
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 
-	house = new Model("models/IllumModels/House03.fbx");
-	door = new Model("models/IllumModels/Window.fbx");
-	moon = new Model("models/IllumModels/moon.fbx");
-	gridMesh = new Model("models/IllumModels/grid.fbx");
 
-	character = new Model("models/IllumModels/Monigote.fbx");
-
-
-	/*CÓDIGO DE ZELENE
 	////////////// M O D E L O S ///////////////////////////
 	//MANGLE
 	arena = new Model("models/arena/arena.fbx");
@@ -228,92 +214,14 @@ bool Start() {
 
 	//nenufar = new Model("models/nenufar/nenufar.fbx");
 	//agua = new Model("models/agua/agua.fbx");
-	*/
 
-
-
-	// Cubemap
-	vector<std::string> faces
-	{
-		"textures/cubemap/01/posx.png",
-		"textures/cubemap/01/negx.png",
-		"textures/cubemap/01/posy.png",
-		"textures/cubemap/01/negy.png",
-		"textures/cubemap/01/posz.png",
-		"textures/cubemap/01/negz.png"
-	};
-	mainCubeMap = new CubeMap();
-	mainCubeMap->loadCubemap(faces);
-	
-	// time, arrays
-	character->SetPose(0.0f, gBones);
-
-	fps = (float)character->getFramerate();
-	keys = (int)character->getNumFrames();
-
-	camera3rd.Position = position;
-	camera3rd.Position.y += 1.7f;
-	camera3rd.Position -= forwardView;
-	camera3rd.Front = forwardView;
-
-	// Lights configuration
-	
-	Light light01;
-	light01.Position = glm::vec3(5.0f, 2.0f, 5.0f);
-	light01.Color = glm::vec4(0.2f, 0.0f, 0.0f, 1.0f);
-	gLights.push_back(light01);
-
-	Light light02;
-	light02.Position = glm::vec3(-5.0f, 2.0f, 5.0f);
-	light02.Color = glm::vec4(0.0f, 0.2f, 0.0f, 1.0f);
-	gLights.push_back(light02);
-
-	Light light03;
-	light03.Position = glm::vec3(5.0f, 2.0f, -5.0f);
-	light03.Color = glm::vec4(0.0f, 0.0f, 0.2f, 1.0f);
-	gLights.push_back(light03);
-
-	Light light04;
-	light04.Position = glm::vec3(-5.0f, 2.0f, -5.0f);
-	light04.Color = glm::vec4(0.2f, 0.2f, 0.0f, 1.0f);
-	gLights.push_back(light04);
-	
+	// CUBO DE FONDO
+	cubeenv = new Model("models/mycube.fbx");
 
 	// SoundEngine->play2D("sound/EternalGarden.mp3", true);
 
 	return true;
 }
-
-
-void SetLightUniformInt(Shader* shader, const char* propertyName, size_t lightIndex, int value) {
-	std::ostringstream ss;
-	ss << "allLights[" << lightIndex << "]." << propertyName;
-	std::string uniformName = ss.str();
-
-	shader->setInt(uniformName.c_str(), value);
-}
-void SetLightUniformFloat(Shader* shader, const char* propertyName, size_t lightIndex, float value) {
-	std::ostringstream ss;
-	ss << "allLights[" << lightIndex << "]." << propertyName;
-	std::string uniformName = ss.str();
-
-	shader->setFloat(uniformName.c_str(), value);
-}
-void SetLightUniformVec4(Shader* shader, const char* propertyName, size_t lightIndex, glm::vec4 value) {
-	std::ostringstream ss;
-	ss << "allLights[" << lightIndex << "]." << propertyName;
-	std::string uniformName = ss.str();
-
-	shader->setVec4(uniformName.c_str(), value);
-}
-void SetLightUniformVec3(Shader* shader, const char* propertyName, size_t lightIndex, glm::vec3 value) {
-	std::ostringstream ss;
-	ss << "allLights[" << lightIndex << "]." << propertyName;
-	std::string uniformName = ss.str();
-
-	shader->setVec3(uniformName.c_str(), value);
-}
-
 
 bool Update() {
 	// Cálculo del framerate
@@ -323,15 +231,19 @@ bool Update() {
 
 	elapsedTime += deltaTime;
 	if (elapsedTime > 1.0f / fps) {
+		elapsedTime = 0.0f;
+
+		particlesSystem.UpdatePhysics(deltaTime);
+	}
+	if (elapsedTime > 1.0f / fps) {
 		animationCount++;
 		if (animationCount > keys - 1) {
 			animationCount = 0;
 		}
 		// Configuración de la pose en el instante t
-		character->SetPose((float)animationCount, gBones);
 		elapsedTime = 0.0f;
-
 	}
+
 
 	// Procesa la entrada del teclado o mouse
 	processInput(window);
@@ -340,136 +252,13 @@ bool Update() {
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Cubemap (fondo)
-	{
-		glm::mat4 projection;
-		glm::mat4 view;
-
-		if (activeCamera) {
-			projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-			view = camera.GetViewMatrix();
-		}
-		else {
-			projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-			view = camera3rd.GetViewMatrix();
-		}
-		
-		mainCubeMap->drawCubeMap(*cubemapShader, projection, view);
-	}
-	
-	 {
-		mLightsShader->use();
-
-		// Activamos para objetos transparentes
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glm::mat4 projection;
-		glm::mat4 view;
-
-		if (activeCamera) {
-			projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-			view = camera.GetViewMatrix();
-		}
-		else {
-			projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-			view = camera3rd.GetViewMatrix();
-		}
-		
-		mLightsShader->setMat4("projection", projection);
-		mLightsShader->setMat4("view", view);
-
-		// Aplicamos transformaciones del modelo
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-		mLightsShader->setMat4("model", model);
-
-		// Configuramos propiedades de fuentes de luz
-		mLightsShader->setInt("numLights", (int)gLights.size());
-		for (size_t i = 0; i < gLights.size(); ++i) {
-			SetLightUniformVec3(mLightsShader, "Position", i, gLights[i].Position);
-			SetLightUniformVec3(mLightsShader, "Direction", i, gLights[i].Direction);
-			SetLightUniformVec4(mLightsShader, "Color", i, gLights[i].Color);
-			SetLightUniformVec4(mLightsShader, "Power", i, gLights[i].Power);
-			SetLightUniformInt(mLightsShader, "alphaIndex", i, gLights[i].alphaIndex);
-			SetLightUniformFloat(mLightsShader, "distance", i, gLights[i].distance);
-		}
-		
-		mLightsShader->setVec3("eye", camera.Position);
-
-		// Aplicamos propiedades materiales
-		mLightsShader->setVec4("MaterialAmbientColor", material01.ambient);
-		mLightsShader->setVec4("MaterialDiffuseColor", material01.diffuse);
-		mLightsShader->setVec4("MaterialSpecularColor", material01.specular);
-		mLightsShader->setFloat("transparency", material01.transparency);
-
-		house->Draw(*mLightsShader);
-
-		model = glm::mat4(1.0f);
-
-		// Actividad 5.1
-		// Efecto de puerta corrediza
-		model = glm::translate(model, glm::vec3(2.815f, 1.316f + 1.88f, 0.37f + door_offset));
-		//model = glm::translate(model, glm::vec3(0.418f, 0.0f, 6.75f));
-		
-		// Efecto de puerta con bisagra
-		model = glm::rotate(model, glm::radians(door_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		mLightsShader->setMat4("model", model);
-
-		door->Draw(*mLightsShader);
-	}
-
 	glUseProgram(0);
 
 
-	/*CREO QUE AQUI VA EL BLOQUE CORRESPONDIENTE A MANGLAR, revisar con Zelene*/
-
-
-
-	// Actividad 5.2
-	
+	// MANGLAR
 	{
-		// Activamos el shader de Phong
-		//proceduralShader->use();
-
-		//// Activamos para objetos transparentes
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		//// Aplicamos transformaciones de proyección y cámara (si las hubiera)
-		//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-		//glm::mat4 view = camera.GetViewMatrix();
-		//proceduralShader->setMat4("projection", projection);
-		//proceduralShader->setMat4("view", view);
-
-		//// Aplicamos transformaciones del modelo
-		//glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-		//proceduralShader->setMat4("model", model);
-
-		//proceduralShader->setFloat("time", proceduralTime);
-		//proceduralShader->setFloat("radius", 5.0f);
-		//proceduralShader->setFloat("height", 0.0f);
-
-		//moon->Draw(*proceduralShader);
-		//proceduralTime += 0.01;
-
-	}
-
-	glUseProgram(0);
-	
-
-	// Actividad 5.3
-	/*
-	{
-		// Activamos el shader de Phong
-		wavesShader->use();
+		// Activamos el shader del plano
+		staticShader->use();
 
 		// Activamos para objetos transparentes
 		glEnable(GL_BLEND);
@@ -478,35 +267,474 @@ bool Update() {
 		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		wavesShader->setMat4("projection", projection);
-		wavesShader->setMat4("view", view);
+		staticShader->setMat4("projection", projection);
+		staticShader->setMat4("view", view);
 
-		// Aplicamos transformaciones del modelo
+
+		////////////////////////MODELOS ESTATICOS/////////////////////////////////////////////
+		// ARENA
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-		wavesShader->setMat4("model", model);
+		model = glm::translate(model, glm::vec3(0.47129, -2.1, -13.738553)); // translate it down so it's at the center of the 
+		model = glm::rotate(model, glm::radians(-270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader->setMat4("model", model);
 
-		wavesShader->setFloat("time", wavesTime);
-		wavesShader->setFloat("radius", 5.0f);
-		wavesShader->setFloat("height", 5.0f);
+		arena->Draw(*staticShader);
 
-		gridMesh->Draw(*wavesShader);
-		wavesTime += 0.01;
+
+		// MANGLE 1 --> EL DE LA DERECHA (EL PRIMERO DE LA DERECHA)
+		glm::mat4 model1 = glm::mat4(1.0f);
+		model1 = glm::translate(model1, glm::vec3(7.89733, 0.5, -19.50047)); // Transformaciones para el primer "mangle"
+		model1 = glm::rotate(model1, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model1 = glm::scale(model1, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model1);
+
+		mangle->Draw(*staticShader);
+
+		// MANGLE 2
+		glm::mat4 model2 = glm::mat4(1.0f);
+		model2 = glm::translate(model2, glm::vec3(5.89733, 0.5, -18.00047)); // Transformaciones para el segundo "mangle"
+		model2 = glm::rotate(model2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model2 = glm::scale(model2, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model2);
+
+		mangle->Draw(*staticShader);
+
+
+		// MANGLE 3
+		glm::mat4 model3 = glm::mat4(1.0f);
+		model3 = glm::translate(model3, glm::vec3(3.89733, 0.5, -19.50047)); // Transformaciones para el segundo "mangle"
+		model3 = glm::rotate(model3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model3 = glm::scale(model3, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model3);
+
+		mangle->Draw(*staticShader);
+
+		// MANGLE 4
+		glm::mat4 model4 = glm::mat4(1.0f);
+		model4 = glm::translate(model4, glm::vec3(1.89733, 0.5, -18.00047)); // Transformaciones para el segundo "mangle"
+		model4 = glm::rotate(model4, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model4 = glm::scale(model4, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model4);
+
+		mangle->Draw(*staticShader);
+
+
+		// MANGLE 9
+		glm::mat4 model9 = glm::mat4(1.0f);
+		model9 = glm::translate(model9, glm::vec3(-1.89733, 0.5, -19.50047)); // Transformaciones para el segundo "mangle"
+		model9 = glm::rotate(model9, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model9 = glm::scale(model9, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model9);
+
+		mangle->Draw(*staticShader);
+
+		// MANGLE 5
+		glm::mat4 model5 = glm::mat4(1.0f);
+		model5 = glm::translate(model5, glm::vec3(-3.89733, 0.5, -18.00047)); // Transformaciones para el segundo "mangle"
+		model5 = glm::rotate(model5, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model5 = glm::scale(model5, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model5);
+
+		mangle->Draw(*staticShader);
+
+
+		// MANGLE 6
+		glm::mat4 model6 = glm::mat4(1.0f);
+		model6 = glm::translate(model6, glm::vec3(-5.89733, 0.5, -19.50047)); // Transformaciones para el segundo "mangle"
+		model6 = glm::rotate(model6, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model6 = glm::scale(model6, glm::vec3((0.4f, 0.4f, 0.4f)));
+		staticShader->setMat4("model", model6);
+
+		mangle->Draw(*staticShader);
+
+		// MANGLE 7
+		glm::mat4 model7 = glm::mat4(1.0f);
+		model7 = glm::translate(model7, glm::vec3(-7.39733, 0.5, -18.00047)); // Transformaciones para el segundo "mangle"
+		model7 = glm::rotate(model7, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model7 = glm::scale(model7, glm::vec3((0.4f, 0.4f, 0.4f)));
+		staticShader->setMat4("model", model7);
+
+		mangle->Draw(*staticShader);
+
+
+		// MANGLE 8
+		glm::mat4 model8 = glm::mat4(1.0f);
+		model8 = glm::translate(model8, glm::vec3(0.0, 0.5, -19.50047)); // Transformaciones para el segundo "mangle"
+		model8 = glm::rotate(model8, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model8 = glm::scale(model8, glm::vec3((0.4f, 0.4f, 0.4f)));
+		staticShader->setMat4("model", model8);
+
+		mangle->Draw(*staticShader);
+
+
+		// LATA DE COCA 1
+		glm::mat4 model12 = glm::mat4(1.0f);
+		model12 = glm::translate(model12, glm::vec3(0.047129, -1.841403, -13.738553)); // Transformaciones para el segundo "mangle"
+		model12 = glm::rotate(model12, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model12 = glm::scale(model12, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model12);
+
+		lataCoca->Draw(*staticShader);
+
+
+		// LATA DE COCA 2
+		glm::mat4 model13 = glm::mat4(1.0f);
+		model13 = glm::translate(model13, glm::vec3(4.047129, -1.81403, -9.738553)); // Transformaciones para el segundo "mangle"
+		model13 = glm::rotate(model13, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model13 = glm::scale(model13, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model13);
+
+		lataCoca->Draw(*staticShader);
+
+		// LATA DE COCA 3
+		glm::mat4 model14 = glm::mat4(1.0f);
+		model14 = glm::translate(model14, glm::vec3(-3.047129, -1.81403, -11.738553)); // Transformaciones para el segundo "mangle"
+		model14 = glm::rotate(model14, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model14 = glm::scale(model14, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model14);
+
+		lataCoca->Draw(*staticShader);
+
+
+		// LATA DE FANTA 3
+		glm::mat4 model15 = glm::mat4(1.0f);
+		model15 = glm::translate(model15, glm::vec3(-3.047129, -1.9999, -15.738553)); // Transformaciones para el segundo "mangle"
+		model15 = glm::rotate(model15, glm::radians(-50.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model15 = glm::scale(model15, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model15);
+
+		lataFanta->Draw(*staticShader);
+
+		// LATA DE SPRITE 3
+		glm::mat4 model16 = glm::mat4(1.0f);
+		model16 = glm::translate(model16, glm::vec3(4.047129, -1.81403, -18.738553)); // Transformaciones para el segundo "mangle"
+		model16 = glm::rotate(model16, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model16 = glm::scale(model16, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model16);
+
+		lataSprite->Draw(*staticShader);
+
+		//COCODRILO
+		glm::mat4 model17 = glm::mat4(1.0f);
+		model17 = glm::translate(model17, glm::vec3(2.11384, -0.81403, -11.50047)); // Transformaciones para el segundo "mangle"
+		model17 = glm::rotate(model17, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model17 = glm::scale(model17, glm::vec3(3.0f, 3.0f, 3.0f));
+		staticShader->setMat4("model", model17);
+
+		cocodrilo->Draw(*staticShader);
+
+		//COCODRILO BEBE
+		glm::mat4 model18 = glm::mat4(1.0f);
+		model18 = glm::translate(model18, glm::vec3(2.11384, -0.81403, -10.50047)); // Transformaciones para el segundo "mangle"
+		model18 = glm::rotate(model18, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model18 = glm::scale(model18, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader->setMat4("model", model18);
+
+		cocodrilo->Draw(*staticShader);
+
+
+		//COCODRILO 2
+		glm::mat4 model19 = glm::mat4(1.0f);
+		model19 = glm::translate(model19, glm::vec3(-1.9733, -0.81403, -14.50047)); // Transformaciones para el segundo "mangle"
+		model19 = glm::rotate(model19, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model19 = glm::rotate(model19, glm::radians(63.8f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model19 = glm::scale(model19, glm::vec3(2.5f, 2.5f, 2.5f));
+		staticShader->setMat4("model", model19);
+
+		cocodrilo->Draw(*staticShader);
+
+
+		//OSTRA 
+		glm::mat4 model20 = glm::mat4(1.0f);
+		model20 = glm::translate(model20, glm::vec3(2.047129, -1.9876, -16.738553)); // Transformaciones para el segundo "mangle"
+		model20 = glm::rotate(model20, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model20 = glm::scale(model20, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model20);
+
+		ostra->Draw(*staticShader);
+
+
+		//OSTRA 2
+		glm::mat4 model21 = glm::mat4(1.0f);
+		model21 = glm::translate(model21, glm::vec3(4.047129, -1.91826, -12.738553)); // Transformaciones para el segundo "mangle"
+		model21 = glm::rotate(model21, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model21 = glm::rotate(model21, glm::radians(-50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model21 = glm::scale(model21, glm::vec3(2.0f, 2.0f, 2.0f));
+		staticShader->setMat4("model", model21);
+
+		ostra->Draw(*staticShader);
+
+		//OSTRA 3
+		glm::mat4 model22 = glm::mat4(1.0f);
+		model22 = glm::translate(model22, glm::vec3(-2.047129, -1.9876, -16.738553)); // Transformaciones para el segundo "mangle"
+		model22 = glm::rotate(model22, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model22 = glm::rotate(model22, glm::radians(-80.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model22 = glm::scale(model22, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model21);
+
+		ostra->Draw(*staticShader);
+
+
+		//OSTRA 4
+		glm::mat4 model23 = glm::mat4(1.0f);
+		model23 = glm::translate(model23, glm::vec3(-2.047129, -1.91826, -10.738553)); // Transformaciones para el segundo "mangle"
+		model23 = glm::rotate(model23, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model23 = glm::rotate(model23, glm::radians(-50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model23 = glm::scale(model23, glm::vec3(2.0f, 2.0f, 2.0f));
+		staticShader->setMat4("model", model23);
+
+		ostra->Draw(*staticShader);
+
+		//OSTRA 5
+		glm::mat4 model24 = glm::mat4(1.0f);
+		model24 = glm::translate(model24, glm::vec3(-4.047129, -1.91826, -16.738553)); // Transformaciones para el segundo "mangle"
+		model24 = glm::rotate(model24, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model24 = glm::rotate(model24, glm::radians(-130.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model24 = glm::scale(model24, glm::vec3(2.0f, 2.0f, 2.0f));
+		staticShader->setMat4("model", model24);
+
+		ostra->Draw(*staticShader);
+
+
+		//OSTRA 5
+		glm::mat4 model25 = glm::mat4(1.0f);
+		model25 = glm::translate(model25, glm::vec3(0.0, -1.9, -16.0)); // Transformaciones para el segundo "mangle"
+		model25 = glm::rotate(model25, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model25 = glm::rotate(model25, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 1.0f));
+		model25 = glm::scale(model25, glm::vec3(2.0f, 2.0f, 2.0f));
+		staticShader->setMat4("model", model25);
+
+		ostra->Draw(*staticShader);
+
+		//ESTRELLA DE MAR 1
+		glm::mat4 model26 = glm::mat4(1.0f);
+		model26 = glm::translate(model26, glm::vec3(2.5, -2.0, -15.0)); // Transformaciones para el segundo "mangle"
+		model26 = glm::rotate(model26, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model26 = glm::scale(model26, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader->setMat4("model", model26);
+
+		estrella->Draw(*staticShader);
+
+		//ESTRELLA DE MAR 2
+		glm::mat4 model27 = glm::mat4(1.0f);
+		model27 = glm::translate(model27, glm::vec3(-2.5, -2.0, -12.0)); // Transformaciones para el segundo "mangle"
+		model27 = glm::rotate(model27, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model27 = glm::scale(model27, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader->setMat4("model", model27);
+
+		estrella->Draw(*staticShader);
+
+		//ESTRELLA DE MAR 3
+		glm::mat4 model28 = glm::mat4(1.0f);
+		model28 = glm::translate(model28, glm::vec3(-0.5, -2.0, -18.0)); // Transformaciones para el segundo "mangle"
+		model28 = glm::rotate(model28, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model28 = glm::scale(model28, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader->setMat4("model", model28);
+
+		estrella->Draw(*staticShader);
+
+		//ESTRELLA DE MAR 4
+		glm::mat4 model29 = glm::mat4(1.0f);
+		model29 = glm::translate(model29, glm::vec3(0.0, -2.0,-11.0)); // Transformaciones para el segundo "mangle"
+		model29 = glm::rotate(model29, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model29 = glm::scale(model29, glm::vec3(2.0f, 2.0f, 2.0f));
+		staticShader->setMat4("model", model29);
+
+		estrella->Draw(*staticShader);
+
+		//ESTRELLA DE MAR 5
+		glm::mat4 model30 = glm::mat4(1.0f);
+		model30 = glm::translate(model30, glm::vec3(4.0, -2.0, -16.0)); // Transformaciones para el segundo "mangle"
+		model30 = glm::rotate(model30, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model30 = glm::scale(model30, glm::vec3(2.0f, 2.0f, 2.0f));
+		staticShader->setMat4("model", model30);
+
+		estrella->Draw(*staticShader);
+
+		//FLAMINGO
+		glm::mat4 model31 = glm::mat4(1.0f);
+		model31 = glm::translate(model31, glm::vec3(0.2, -3.2, -12.0)); // Transformaciones para el segundo "mangle"
+		model31 = glm::rotate(model31, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model31 = glm::scale(model31, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model31);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO 2
+		glm::mat4 model32 = glm::mat4(1.0f);
+		model32 = glm::translate(model32, glm::vec3(-3.0, -3.2, -15.0)); // Transformaciones para el segundo "mangle"
+		model32 = glm::rotate(model32, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model32 = glm::scale(model32, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model32);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO 3
+		glm::mat4 model33 = glm::mat4(1.0f);
+		model33 = glm::translate(model33, glm::vec3(0.4, -3.2, -12.3)); // Transformaciones para el segundo "mangle"
+		model33 = glm::rotate(model33, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model33 = glm::scale(model33, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model33);
+
+		flamingo->Draw(*staticShader);
+
+
+		//FLAMINGO 4
+		glm::mat4 model34 = glm::mat4(1.0f);
+		model34 = glm::translate(model34, glm::vec3(0.8, -3.2, -12.0)); // Transformaciones para el segundo "mangle"
+		model34 = glm::rotate(model34, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model34 = glm::scale(model34, glm::vec3(0.3f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model34);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO
+		glm::mat4 model35 = glm::mat4(1.0f);
+		model35 = glm::translate(model35, glm::vec3(4.2, -3.2, -8.0)); // Transformaciones para el segundo "mangle"
+		model35 = glm::rotate(model35, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model35 = glm::scale(model35, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model35);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO 3
+		glm::mat4 model36 = glm::mat4(1.0f);
+		model36 = glm::translate(model36, glm::vec3(4.4, -3.2, -8.3)); // Transformaciones para el segundo "mangle"
+		model36 = glm::rotate(model36, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model36 = glm::scale(model36, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model36);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO 4
+		glm::mat4 model37 = glm::mat4(1.0f);
+		model37 = glm::translate(model37, glm::vec3(4.8, -3.2, -8.0)); // Transformaciones para el segundo "mangle"
+		model37 = glm::rotate(model37, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model37 = glm::scale(model37, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model37);
+
+		flamingo->Draw(*staticShader);
+
+
+		//FLAMINGO
+		glm::mat4 model38 = glm::mat4(1.0f);
+		model38 = glm::translate(model38, glm::vec3(-4.2, -3.2, -10.0)); // Transformaciones para el segundo "mangle"
+		model38 = glm::rotate(model38, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model38 = glm::scale(model38, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model38);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO 3
+		glm::mat4 model39 = glm::mat4(1.0f);
+		model39 = glm::translate(model39, glm::vec3(-4.4, -3.2, -10.3)); // Transformaciones para el segundo "mangle"
+		model39 = glm::rotate(model39, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model39 = glm::scale(model39, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model39);
+
+		flamingo->Draw(*staticShader);
+
+		//FLAMINGO 4
+		glm::mat4 model40 = glm::mat4(1.0f);
+		model40 = glm::translate(model40, glm::vec3(-4.8, -3.2, -10.0)); // Transformaciones para el segundo "mangle"
+		model40 = glm::rotate(model40, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model40 = glm::scale(model40, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model40);
+
+		flamingo->Draw(*staticShader);
+
+		//CANGREJO 1
+		glm::mat4 model41 = glm::mat4(1.0f);
+		model41 = glm::translate(model41, glm::vec3(7.8, -2.0, -20.0)); // Transformaciones para el segundo "mangle"
+		model41 = glm::rotate(model41, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model41 = glm::scale(model41, glm::vec3(0.9f, 0.9f, 0.9f));
+		staticShader->setMat4("model", model41);
+
+		cangrejo->Draw(*staticShader);
+
+		//CANGREJO 2
+		glm::mat4 model42 = glm::mat4(1.0f);
+		model42 = glm::translate(model42, glm::vec3(-4.8, -2.0, -6.0)); // Transformaciones para el segundo "mangle"
+		model42 = glm::rotate(model42, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model42 = glm::scale(model42, glm::vec3(0.8f, 0.8f, 0.8f));
+		staticShader->setMat4("model", model42);
+
+		cangrejo->Draw(*staticShader);
+
+		//CANGREJO 3
+		glm::mat4 model43 = glm::mat4(1.0f);
+		model43 = glm::translate(model43, glm::vec3(-6.0, -2.0, -15.0)); // Transformaciones para el segundo "mangle"
+		model43 = glm::rotate(model43, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model43 = glm::scale(model43, glm::vec3(0.7f, 0.7f, 0.7f));
+		staticShader->setMat4("model", model43);
+
+		cangrejo->Draw(*staticShader);
+
+
+		//CANGREJO 4
+		glm::mat4 model44 = glm::mat4(1.0f);
+		model44 = glm::translate(model44, glm::vec3(0.0, -2.0, -20.0)); // Transformaciones para el segundo "mangle"
+		model44 = glm::rotate(model44, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model44 = glm::scale(model44, glm::vec3(0.9f, 0.9f, 0.9f));
+		staticShader->setMat4("model", model44);
+
+		cangrejo->Draw(*staticShader);
+
+		//CANGREJO 5
+		glm::mat4 model45 = glm::mat4(1.0f);
+		model45 = glm::translate(model45, glm::vec3(3.8, -2.0, -20.0)); // Transformaciones para el segundo "mangle"
+		model45 = glm::rotate(model45, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model45 = glm::scale(model45, glm::vec3(0.6f, 0.6f, 0.6f));
+		staticShader->setMat4("model", model45);
+
+		cangrejo->Draw(*staticShader);
+
+		//CANGREJO 6
+		glm::mat4 model46 = glm::mat4(1.0f);
+		model46 = glm::translate(model46, glm::vec3(0.8, -2.0, -6.0)); // Transformaciones para el segundo "mangle"
+		model46 = glm::rotate(model46, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model46 = glm::scale(model46, glm::vec3(0.6f, 0.6f, 0.6f));
+		staticShader->setMat4("model", model46);
+
+		cangrejo->Draw(*staticShader);
 
 	}
 
-	glUseProgram(0);
-	*/
-	
-	// Objeto animado
+
+
 	{
-		// Activación del shader del personaje
-		ourShader->use();
+		// Activamos el shader del plano
+		staticShader->use();
 
 		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
-		
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		staticShader->setMat4("projection", projection);
+		staticShader->setMat4("view", view);
+
+		// Aplicamos transformaciones del modelo
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(100.0f, 100.0f, 100.0f));	// it's a bit too big for our scene, so scale it down
+		staticShader->setMat4("model", model);
+
+		cubeenv->Draw(*staticShader);
+
+
+
+	}
+
+
+	// Animación de partículas
+	{
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+
 		glm::mat4 projection;
 		glm::mat4 view;
 
@@ -518,27 +746,30 @@ bool Update() {
 			projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
 			view = camera3rd.GetViewMatrix();
 		}
-		
-		ourShader->setMat4("projection", projection);
-		ourShader->setMat4("view", view);
 
-		// Aplicamos transformaciones del modelo
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, position); // translate it down so it's at the center of the scene
-		model = glm::rotate(model, glm::radians(rotateCharacter), glm::vec3(0.0, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));	// it's a bit too big for our scene, so scale it down
+		for (int psc = 0; psc < particlesSystem.particles.size(); psc++) {
+			Particle p_i = particlesSystem.particles.at(psc);
 
-		ourShader->setMat4("model", model);
+			// Activación del shader de las partículas
+			particlesShader->use();
+			particlesShader->setMat4("projection", projection);
+			particlesShader->setMat4("view", view);
 
-		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBones);
+			// Aplicamos transformaciones del modelo
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, p_i.position); // translate it down so it's at the center of the scene
+			model = glm::rotate(model, glm::radians(rotateCharacter), glm::vec3(0.0, 1.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));	// it's a bit too big for our scene, so scale it down
 
-		// Dibujamos el modelo
-		character->Draw(*ourShader);
+			particlesShader->setMat4("model", model);
+
+			// Dibujamos el modelo
+			particleModel->Draw(*particlesShader);
+		}
+
 	}
 
-	glUseProgram(0); 
-
-	
+	glUseProgram(0);
 
 	// glfw: swap buffers 
 	glfwSwapBuffers(window);
@@ -568,68 +799,8 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 
-	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-		door_offset += 0.01f;
-	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-		door_offset -= 0.01f;
-	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		door_rotation += 1.f;
-	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		door_rotation -= 1.f;
 
-	// Character movement
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 
-		position = position + scaleV * forwardView;
-		camera3rd.Front = forwardView;
-		camera3rd.ProcessKeyboard(FORWARD, deltaTime);
-		camera3rd.Position = position;
-		camera3rd.Position.y += 1.7f;
-		camera3rd.Position -= forwardView;
-
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		position = position - scaleV * forwardView;
-		camera3rd.Front = forwardView;
-		camera3rd.ProcessKeyboard(BACKWARD, deltaTime);
-		camera3rd.Position = position;
-		camera3rd.Position.y += 1.7f;
-		camera3rd.Position -= forwardView;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		rotateCharacter += 0.5f;
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(rotateCharacter), glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::vec4 viewVector = model * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-		forwardView = glm::vec3(viewVector);
-		forwardView = glm::normalize(forwardView);
-
-		camera3rd.Front = forwardView;
-		camera3rd.Position = position;
-		camera3rd.Position.y += 1.7f;
-		camera3rd.Position -= forwardView;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		rotateCharacter -= 0.5f;
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(rotateCharacter), glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::vec4 viewVector = model * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-		forwardView = glm::vec3(viewVector);
-		forwardView = glm::normalize(forwardView);
-
-		camera3rd.Front = forwardView;
-		camera3rd.Position = position;
-		camera3rd.Position.y += 1.7f;
-		camera3rd.Position -= forwardView;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
-		activeCamera = 0;
-	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
-		activeCamera = 1;
-	
 }
 
 // glfw: Actualizamos el puerto de vista si hay cambios del tamaño
@@ -650,7 +821,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 
 	float xoffset = (float)xpos - lastX;
-	float yoffset = lastY - (float)ypos; 
+	float yoffset = lastY - (float)ypos;
 
 	lastX = (float)xpos;
 	lastY = (float)ypos;
