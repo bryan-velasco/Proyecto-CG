@@ -96,26 +96,34 @@ CubeMap* mainCubeMap;
 ISoundEngine* SoundEngine = createIrrKlangDevice();
 
 // Carga la información del modelo
-Model* arena;
-Model* mangle;
-Model* estrella;
-Model* manati;
-Model* florLoto;
-Model* cocodrilo;
-Model* medusa;
-Model* bolsaPlastico;
-Model* lataCoca;
-Model* lataFanta;
-Model* lataSprite;
-Model* flamingo;
-Model* tortuga;
-Model* agua;
-Model* ostra;
-Model* nenufar;
-Model* cangrejo;
-Model* pez;
+
+Model* lirio;		//1
+Model* nenufar;		//2
+Model* cocodrilo;	//3
+Model* tortuga;		//4
+Model* mangle;		//5
+Model* cangrejo;	//6
+Model* garza;		//7
+Model* bolsa;		//8
+Model* lataCoca;	//9
+Model* lataFanta;	//9
+Model* lataSprite;	//9
+Model* ostra;		//10
+Model* flamingo;	//11
+Model* estrella;	//12
+Model* medusa;		//13
+Model* boa;			//14
+Model* alga;		//15
+Model* gavilan;		//16
+Model* pez;			//17
+Model* manati;		//18
+Model* agua;		//19
+Model* lancha;		//20
+Model* arena;		//21
 
 Model* cubeenv;
+
+
 
 
 // Pose inicial del modelo
