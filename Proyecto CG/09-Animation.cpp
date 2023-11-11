@@ -81,7 +81,7 @@ Shader* particlesShader;
 Shader* wavesShader;
 
 // Partículas
-Particles particlesSystem(50); // creamos 200 partículas
+Particles particlesSystem(70); // creamos 200 partículas
 
 // Carga la información del modelo
 Model *particleModel;
@@ -304,18 +304,18 @@ bool Update() {
 
 		// MANGLE 1 --> EL DE LA DERECHA (EL PRIMERO DE LA DERECHA)
 		glm::mat4 model1 = glm::mat4(1.0f);
-		model1 = glm::translate(model1, glm::vec3(7.89733, 0.5, -19.50047));  
+		model1 = glm::translate(model1, glm::vec3(7.89733, -0.85, -21.0));  
 		model1 = glm::rotate(model1, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model1 = glm::scale(model1, glm::vec3(0.4f, 0.4f, 0.4f));
+		model1 = glm::scale(model1, glm::vec3(0.4f, 0.6f, 0.5f));
 		staticShader->setMat4("model", model1);
 
 		mangle->Draw(*staticShader);
 
 		// MANGLE 2
 		glm::mat4 model2 = glm::mat4(1.0f);
-		model2 = glm::translate(model2, glm::vec3(5.89733, 0.5, -18.00047));  
+		model2 = glm::translate(model2, glm::vec3(5.89733, -1.2, -20.0));
 		model2 = glm::rotate(model2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model2 = glm::scale(model2, glm::vec3(0.4f, 0.4f, 0.4f));
+		model2 = glm::scale(model2, glm::vec3(0.3f, 0.4f, 0.35f));
 		staticShader->setMat4("model", model2);
 
 		mangle->Draw(*staticShader);
@@ -323,37 +323,28 @@ bool Update() {
 
 		// MANGLE 3
 		glm::mat4 model3 = glm::mat4(1.0f);
-		model3 = glm::translate(model3, glm::vec3(3.89733, 0.5, -19.50047));  
+		model3 = glm::translate(model3, glm::vec3(3.89733, -0.85, -21.0));
 		model3 = glm::rotate(model3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model3 = glm::scale(model3, glm::vec3(0.4f, 0.4f, 0.4f));
+		model3 = glm::scale(model3, glm::vec3(0.4f, 0.6f, 0.5f));
 		staticShader->setMat4("model", model3);
 
 		mangle->Draw(*staticShader);
 
 		// MANGLE 4
 		glm::mat4 model4 = glm::mat4(1.0f);
-		model4 = glm::translate(model4, glm::vec3(1.89733, 0.5, -18.00047));  
+		model4 = glm::translate(model4, glm::vec3(1.89733, -0.95, -20.0));
 		model4 = glm::rotate(model4, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model4 = glm::scale(model4, glm::vec3(0.4f, 0.4f, 0.4f));
+		model4 = glm::scale(model4, glm::vec3(0.3f, 0.4f, 0.35f));
 		staticShader->setMat4("model", model4);
 
 		mangle->Draw(*staticShader);
 
 
-		// MANGLE 9
-		glm::mat4 model9 = glm::mat4(1.0f);
-		model9 = glm::translate(model9, glm::vec3(-1.89733, 0.5, -19.50047));  
-		model9 = glm::rotate(model9, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model9 = glm::scale(model9, glm::vec3(0.4f, 0.4f, 0.4f));
-		staticShader->setMat4("model", model9);
-
-		mangle->Draw(*staticShader);
-
 		// MANGLE 5
 		glm::mat4 model5 = glm::mat4(1.0f);
-		model5 = glm::translate(model5, glm::vec3(-3.89733, 0.5, -18.00047));  
+		model5 = glm::translate(model5, glm::vec3(0.0, -0.85, -21.0));
 		model5 = glm::rotate(model5, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model5 = glm::scale(model5, glm::vec3(0.4f, 0.4f, 0.4f));
+		model5 = glm::scale(model5, glm::vec3(0.4f, 0.6f, 0.5f));
 		staticShader->setMat4("model", model5);
 
 		mangle->Draw(*staticShader);
@@ -361,18 +352,18 @@ bool Update() {
 
 		// MANGLE 6
 		glm::mat4 model6 = glm::mat4(1.0f);
-		model6 = glm::translate(model6, glm::vec3(-5.89733, 0.5, -19.50047));  
+		model6 = glm::translate(model6, glm::vec3(-1.89733, -0.85, -20.0));
 		model6 = glm::rotate(model6, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model6 = glm::scale(model6, glm::vec3((0.4f, 0.4f, 0.4f)));
+		model6 = glm::scale(model6, glm::vec3((0.3f, 0.4f, 0.35f)));
 		staticShader->setMat4("model", model6);
 
 		mangle->Draw(*staticShader);
 
 		// MANGLE 7
 		glm::mat4 model7 = glm::mat4(1.0f);
-		model7 = glm::translate(model7, glm::vec3(-7.39733, 0.5, -18.00047));  
+		model7 = glm::translate(model7, glm::vec3(-3.8, -0.85, -21.0));
 		model7 = glm::rotate(model7, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model7 = glm::scale(model7, glm::vec3((0.4f, 0.4f, 0.4f)));
+		model7 = glm::scale(model7, glm::vec3((0.4f, 0.6f, 0.5f)));
 		staticShader->setMat4("model", model7);
 
 		mangle->Draw(*staticShader);
@@ -380,10 +371,21 @@ bool Update() {
 
 		// MANGLE 8
 		glm::mat4 model8 = glm::mat4(1.0f);
-		model8 = glm::translate(model8, glm::vec3(0.0, 0.5, -19.50047));  
+		model8 = glm::translate(model8, glm::vec3(-5.5, -0.85, -20.0));
 		model8 = glm::rotate(model8, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model8 = glm::scale(model8, glm::vec3((0.4f, 0.4f, 0.4f)));
+		model8 = glm::scale(model8, glm::vec3((0.3f, 0.4f, 0.35f)));
 		staticShader->setMat4("model", model8);
+
+		mangle->Draw(*staticShader);
+
+
+
+		// MANGLE 9
+		glm::mat4 model9 = glm::mat4(1.0f);
+		model9 = glm::translate(model9, glm::vec3(-7.0, -0.85, -20.0));
+		model9 = glm::rotate(model9, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model9 = glm::scale(model9, glm::vec3((0.4f, 0.6f, 0.5f)));
+		staticShader->setMat4("model", model9);
 
 		mangle->Draw(*staticShader);
 
@@ -437,8 +439,9 @@ bool Update() {
 
 		//COCODRILO
 		glm::mat4 model17 = glm::mat4(1.0f);
-		model17 = glm::translate(model17, glm::vec3(2.11384, -0.81403, -11.50047));  
+		model17 = glm::translate(model17, glm::vec3(2.11384, -0.5603, -11.50047));  
 		model17 = glm::rotate(model17, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model17 = glm::rotate(model17, glm::radians(-8.28166f), glm::vec3(1.0f, 1.0f, 0.0f));
 		model17 = glm::scale(model17, glm::vec3(3.0f, 3.0f, 4.0f));
 		staticShader->setMat4("model", model17);
 
@@ -446,8 +449,9 @@ bool Update() {
 
 		//COCODRILO BEBE
 		glm::mat4 model18 = glm::mat4(1.0f);
-		model18 = glm::translate(model18, glm::vec3(2.11384, -0.81403, -9.50047));  
+		model18 = glm::translate(model18, glm::vec3(2.11384, -0.5, -9.50047));  
 		model18 = glm::rotate(model18, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model18 = glm::rotate(model18, glm::radians(-8.28166f), glm::vec3(1.0f, 1.0f, 0.0f));
 		model18 = glm::scale(model18, glm::vec3(1.5f, 1.5f, 2.5f));
 		staticShader->setMat4("model", model18);
 
@@ -456,9 +460,10 @@ bool Update() {
 
 		//COCODRILO 2
 		glm::mat4 model19 = glm::mat4(1.0f);
-		model19 = glm::translate(model19, glm::vec3(-1.9733, -0.81403, -14.50047));  
+		model19 = glm::translate(model19, glm::vec3(-1.9733, -0.551403, -14.50047));  
 		model19 = glm::rotate(model19, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model19 = glm::rotate(model19, glm::radians(63.8f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model19 = glm::rotate(model19, glm::radians(-4.97354f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model19 = glm::scale(model19, glm::vec3(2.5f, 2.5f, 3.5f));
 		staticShader->setMat4("model", model19);
 
@@ -722,7 +727,7 @@ bool Update() {
 
 		//MEDUSA 1
 		glm::mat4 model47 = glm::mat4(1.0f);
-		model47 = glm::translate(model47, glm::vec3(6.8, -1.0, -10.0)); 
+		model47 = glm::translate(model47, glm::vec3(5.8, -1.0, -10.0)); 
 		model47 = glm::rotate(model47, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model47 = glm::scale(model47, glm::vec3(0.2f, 0.2f, 0.2f));
 		staticShader->setMat4("model", model47);
@@ -863,7 +868,7 @@ bool Update() {
 
 		// Aplicamos transformaciones del modelo
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.47129, -0.80, -13.738553));
+		model = glm::translate(model, glm::vec3(0.47129, -0.4, -13.738553));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		wavesShader->setMat4("model", model);
