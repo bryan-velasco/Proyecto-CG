@@ -121,6 +121,7 @@ Model* manati;		//18
 Model* agua;		//19
 Model* lancha;		//20
 Model* arena;		//21
+Model* roca;		//21
 
 Model* gridMesh;
 
@@ -229,8 +230,8 @@ bool Start() {
 	flamingo = new Model("models/flamingo/flamingo.fbx");
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
-
 	gridMesh = new Model("models/agua/agua.fbx");
+	roca = new Model("models/roca/roca.fbx");
 
 	//nenufar = new Model("models/nenufar/nenufar.fbx");
 	//agua = new Model("models/agua/agua.fbx");
@@ -238,7 +239,7 @@ bool Start() {
 	// CUBO DE FONDO
 	cubeenv = new Model("models/mycube.fbx");
 
-	// SoundEngine->play2D("sound/EternalGarden.mp3", true);
+	//SoundEngine->play2D("sound/mar.mp3", true);
 
 	return true;
 }
@@ -577,29 +578,29 @@ bool Update() {
 
 		estrella->Draw(*staticShader);
 
-		//FLAMINGO
+		//FLAMINGO 1
 		glm::mat4 model31 = glm::mat4(1.0f);
-		model31 = glm::translate(model31, glm::vec3(0.2, -3.2, -12.0));  
+		model31 = glm::translate(model31, glm::vec3(0.2, -3.3, -12.0));  
 		model31 = glm::rotate(model31, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model31 = glm::scale(model31, glm::vec3(0.4f, 0.4f, 0.4f));
+		model31 = glm::scale(model31, glm::vec3(0.5f, 0.55f, 0.55f));
 		staticShader->setMat4("model", model31);
 
 		flamingo->Draw(*staticShader);
 
 		//FLAMINGO 2
 		glm::mat4 model32 = glm::mat4(1.0f);
-		model32 = glm::translate(model32, glm::vec3(-3.0, -3.2, -15.0));  
+		model32 = glm::translate(model32, glm::vec3(0.7, -3.4, -12.0));
 		model32 = glm::rotate(model32, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model32 = glm::scale(model32, glm::vec3(0.4f, 0.4f, 0.4f));
+		model32 = glm::scale(model32, glm::vec3(0.5f, 0.55f, 0.55f));
 		staticShader->setMat4("model", model32);
 
 		flamingo->Draw(*staticShader);
 
 		//FLAMINGO 3
 		glm::mat4 model33 = glm::mat4(1.0f);
-		model33 = glm::translate(model33, glm::vec3(0.4, -3.2, -12.3));  
+		model33 = glm::translate(model33, glm::vec3(1.0, -3.3, -12.0));
 		model33 = glm::rotate(model33, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model33 = glm::scale(model33, glm::vec3(0.4f, 0.4f, 0.4f));
+		model33 = glm::scale(model33, glm::vec3(0.5f, 0.55f, 0.55f));
 		staticShader->setMat4("model", model33);
 
 		flamingo->Draw(*staticShader);
@@ -607,64 +608,64 @@ bool Update() {
 
 		//FLAMINGO 4
 		glm::mat4 model34 = glm::mat4(1.0f);
-		model34 = glm::translate(model34, glm::vec3(0.8, -3.2, -12.0));  
+		model34 = glm::translate(model34, glm::vec3(4.8, -3.1, -5.0));
 		model34 = glm::rotate(model34, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model34 = glm::scale(model34, glm::vec3(0.3f, 0.4f, 0.4f));
+		model34 = glm::scale(model34, glm::vec3(0.5f, 0.55f, 0.55f));
 		staticShader->setMat4("model", model34);
 
 		flamingo->Draw(*staticShader);
 
-		//FLAMINGO
+		//FLAMINGO 5
 		glm::mat4 model35 = glm::mat4(1.0f);
-		model35 = glm::translate(model35, glm::vec3(4.2, -3.2, -8.0));  
+		model35 = glm::translate(model35, glm::vec3(4.5, -3.1, -5.3));
 		model35 = glm::rotate(model35, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model35 = glm::scale(model35, glm::vec3(0.4f, 0.4f, 0.4f));
+		model35 = glm::scale(model35, glm::vec3(0.5f, 0.5f, 0.5f));
 		staticShader->setMat4("model", model35);
 
 		flamingo->Draw(*staticShader);
 
-		//FLAMINGO 3
+		//FLAMINGO 6
 		glm::mat4 model36 = glm::mat4(1.0f);
-		model36 = glm::translate(model36, glm::vec3(4.4, -3.2, -8.3));  
+		model36 = glm::translate(model36, glm::vec3(4.1, -3.1, -5.0));
 		model36 = glm::rotate(model36, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model36 = glm::scale(model36, glm::vec3(0.4f, 0.4f, 0.4f));
+		model36 = glm::scale(model36, glm::vec3(0.5f, 0.55f, 0.55f));
 		staticShader->setMat4("model", model36);
 
 		flamingo->Draw(*staticShader);
 
-		//FLAMINGO 4
+		//FLAMINGO 7
 		glm::mat4 model37 = glm::mat4(1.0f);
-		model37 = glm::translate(model37, glm::vec3(4.8, -3.2, -8.0));  
+		model37 = glm::translate(model37, glm::vec3(3.7, -3.0, -5.2));
 		model37 = glm::rotate(model37, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model37 = glm::scale(model37, glm::vec3(0.4f, 0.4f, 0.4f));
+		model37 = glm::scale(model37, glm::vec3(0.5f, 0.55f, 0.5f));
 		staticShader->setMat4("model", model37);
 
 		flamingo->Draw(*staticShader);
 
 
-		//FLAMINGO
+		//FLAMINGO 8
 		glm::mat4 model38 = glm::mat4(1.0f);
-		model38 = glm::translate(model38, glm::vec3(-4.2, -3.2, -10.0));  
+		model38 = glm::translate(model38, glm::vec3(-4.2, -3.05, -10.0));
 		model38 = glm::rotate(model38, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model38 = glm::scale(model38, glm::vec3(0.4f, 0.4f, 0.4f));
+		model38 = glm::scale(model38, glm::vec3(0.5f, 0.55f, 0.55f));
 		staticShader->setMat4("model", model38);
 
 		flamingo->Draw(*staticShader);
 
-		//FLAMINGO 3
+		//FLAMINGO 9
 		glm::mat4 model39 = glm::mat4(1.0f);
-		model39 = glm::translate(model39, glm::vec3(-4.4, -3.2, -10.3));  
+		model39 = glm::translate(model39, glm::vec3(-4.7, -2.90, -10.4));
 		model39 = glm::rotate(model39, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model39 = glm::scale(model39, glm::vec3(0.4f, 0.4f, 0.4f));
+		model39 = glm::scale(model39, glm::vec3(0.5f, 0.6f, 0.55f));
 		staticShader->setMat4("model", model39);
 
 		flamingo->Draw(*staticShader);
 
-		//FLAMINGO 4
+		//FLAMINGO 10
 		glm::mat4 model40 = glm::mat4(1.0f);
-		model40 = glm::translate(model40, glm::vec3(-4.8, -3.2, -10.0));  
+		model40 = glm::translate(model40, glm::vec3(-3.60, -2.90, -10.8));
 		model40 = glm::rotate(model40, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model40 = glm::scale(model40, glm::vec3(0.4f, 0.4f, 0.4f));
+		model40 = glm::scale(model40, glm::vec3(0.5f, 0.4f, 0.55f));
 		staticShader->setMat4("model", model40);
 
 		flamingo->Draw(*staticShader);
@@ -780,8 +781,83 @@ bool Update() {
 		medusa->Draw(*staticShader);
 
 
+		//ROCA 1
+		glm::mat4 model53 = glm::mat4(1.0f);
+		model53 = glm::translate(model53, glm::vec3(1.2, -2.0, -15.2));
+		model53 = glm::rotate(model53, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model53 = glm::scale(model53, glm::vec3(0.344f, 0.344f, 0.344f));
+		staticShader->setMat4("model", model53);
+
+		roca->Draw(*staticShader);
+
+		//ROCA 2
+		glm::mat4 model54 = glm::mat4(1.0f);
+		model54 = glm::translate(model54, glm::vec3(2.0, -2.0, -15.5));
+		model54 = glm::rotate(model54, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model54 = glm::scale(model54, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", model54);
+
+		roca->Draw(*staticShader);
+
+		//ROCA 3
+		glm::mat4 model55 = glm::mat4(1.0f);
+		model55 = glm::translate(model55, glm::vec3(1.5, -2.0, -15.5));
+		model55 = glm::rotate(model55, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model55 = glm::scale(model55, glm::vec3(0.5f, 0.5f, 0.5f));
+		staticShader->setMat4("model", model55);
+
+		roca->Draw(*staticShader);
 
 
+		//ROCA 4
+		glm::mat4 model56 = glm::mat4(1.0f);
+		model56 = glm::translate(model56, glm::vec3(5.8, -2.0, -8.4));
+		model56 = glm::rotate(model56, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model56 = glm::scale(model56, glm::vec3(0.3f, 0.6f, 0.57f));
+		staticShader->setMat4("model", model56);
+
+		roca->Draw(*staticShader);
+
+
+		//ROCA 5
+		glm::mat4 model57 = glm::mat4(1.0f);
+		model57 = glm::translate(model57, glm::vec3(4.8, -2.0, -8.6));
+		model57 = glm::rotate(model57, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model57 = glm::scale(model57, glm::vec3(0.6f, 0.8f, 0.6f));
+		staticShader->setMat4("model", model57);
+		
+		roca->Draw(*staticShader);
+
+
+		//ROCA 6
+		glm::mat4 model58 = glm::mat4(1.0f);
+		model58 = glm::translate(model58, glm::vec3(-3.0, -2.0, -13.2));
+		model58 = glm::rotate(model58, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model58 = glm::scale(model58, glm::vec3(0.6f, 0.8f, 0.7f));
+		staticShader->setMat4("model", model58); 
+
+		roca->Draw(*staticShader);
+
+
+		//ROCA 7
+		glm::mat4 model59 = glm::mat4(1.0f);
+		model59 = glm::translate(model59, glm::vec3(-4.0, -2.0, -13.9));
+		model59 = glm::rotate(model59, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model59 = glm::scale(model59, glm::vec3(0.5f, 0.9f, 0.7f));
+		staticShader->setMat4("model", model59);
+
+		roca->Draw(*staticShader);
+
+		//ROCA 8
+		glm::mat4 model60 = glm::mat4(1.0f);
+		model60 = glm::translate(model60, glm::vec3(-2.5, -2.0, -13.2));
+		model60 = glm::rotate(model60, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model60 = glm::scale(model60, glm::vec3(0.3f, 0.9f, 0.7f));
+		staticShader->setMat4("model", model60);
+
+		roca->Draw(*staticShader);
+		
+		
 	}
 
 
