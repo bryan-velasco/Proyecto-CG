@@ -36,7 +36,7 @@ public:
 			P.p0.x = random_valuex;
 
 			double min_valuey = -2.0;
-			double max_valuey = 1.6;
+			double max_valuey = -0.5;
 			double rangey = max_valuey - min_valuey;
 			double random_valuey = ((double)rand() / RAND_MAX) * rangey + min_valuey;
 			P.p0.y = random_valuey;
@@ -73,7 +73,7 @@ public:
 			P->velocity += P->acceleration * deltaTime;
 			P->position += P->velocity * deltaTime;
 
-			if (P->position.y >= 1.6) {
+			if (P->position.y >= -0.5) {
 				// Cuando una partícula llega a la parte superior, regresa a la posición inicial en la parte inferior
 				P->position = P->p0;
 				P->velocity = glm::vec3(0.0f, 0.0f, 0.0f);  // Resetea la velocidad
