@@ -79,6 +79,8 @@ Shader* staticShader;
 Shader *cubemapShader;
 Shader* particlesShader;
 Shader* wavesShader;
+Shader* nenufarShader;
+Shader* jellyFishShader;
 
 // Partículas
 Particles particlesSystem(70); // creamos 200 partículas
@@ -122,7 +124,8 @@ Model* agua;		//19
 Model* lancha;		//20
 Model* arena;		//21
 
-Model* gridMesh;
+Model* WaterGridMesh;
+Model* NenufarGridMesh;
 
 Model* cubeenv;
 
@@ -206,6 +209,8 @@ bool Start() {
 	cubemapShader = new Shader("shaders/10_vertex_cubemap.vs", "shaders/10_fragment_cubemap.fs");
 	particlesShader = new Shader("shaders/13_particles.vs", "shaders/13_particles.fs");
 	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
+	nenufarShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
+	jellyFishShader = new Shader("shaders/14_jellyFishAnimation.vs", "shaders/10_fragment_simple.fs");
 
 	particleModel = new Model("models/snow/burbuja.fbx");
 
@@ -230,10 +235,11 @@ bool Start() {
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
 
-	gridMesh = new Model("models/agua/agua.fbx");
+
+	WaterGridMesh = new Model("models/agua/agua.fbx");
+	NenufarGridMesh = new Model("models/nenufar/nenufar.fbx");
 
 	//nenufar = new Model("models/nenufar/nenufar.fbx");
-	//agua = new Model("models/agua/agua.fbx");
 
 	// CUBO DE FONDO
 	cubeenv = new Model("models/mycube.fbx");
@@ -723,67 +729,7 @@ bool Update() {
 		staticShader->setMat4("model", model46);
 
 		cangrejo->Draw(*staticShader);
-
-
-		//MEDUSA 1
-		glm::mat4 model47 = glm::mat4(1.0f);
-		model47 = glm::translate(model47, glm::vec3(5.8, -1.0, -10.0)); 
-		model47 = glm::rotate(model47, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model47 = glm::scale(model47, glm::vec3(0.2f, 0.2f, 0.2f));
-		staticShader->setMat4("model", model47);
-
-		medusa->Draw(*staticShader);
-
-		//MEDUSA 2
-		glm::mat4 model48 = glm::mat4(1.0f);
-		model48 = glm::translate(model48, glm::vec3(0.8, -1.0, -5.0));
-		model48 = glm::rotate(model48, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model48 = glm::scale(model48, glm::vec3(0.3f, 0.3f, 0.3f));
-		staticShader->setMat4("model", model48);
-
-		medusa->Draw(*staticShader);
-
-		//MEDUSA 3
-		glm::mat4 model49 = glm::mat4(1.0f);
-		model49 = glm::translate(model49, glm::vec3(-4.8, -1.2, -15.0));  
-		model49 = glm::rotate(model49, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model49 = glm::scale(model49, glm::vec3(0.19f, 0.19f, 0.19f));
-		staticShader->setMat4("model", model49);
-
-		medusa->Draw(*staticShader);
-
-		//MEDUSA 4
-		glm::mat4 model50 = glm::mat4(1.0f);
-		model50 = glm::translate(model50, glm::vec3(0.0, -1.0, -12.0));  
-		model50 = glm::rotate(model50, glm::radians(-150.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model50 = glm::scale(model50, glm::vec3(0.15f, 0.15f, 0.15f));
-		staticShader->setMat4("model", model50);
-
-		medusa->Draw(*staticShader);
-
-		//MEDUSA 5
-		glm::mat4 model51 = glm::mat4(1.0f);
-		model51 = glm::translate(model51, glm::vec3(4.8, -1.0, -18.0));  
-		model51 = glm::rotate(model51, glm::radians(-120.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model51 = glm::scale(model51, glm::vec3(0.2f, 0.2f, 0.2f));
-		staticShader->setMat4("model", model51);
-
-		medusa->Draw(*staticShader);
-
-		//MEDUSA 6
-		glm::mat4 model52 = glm::mat4(1.0f);
-		model52 = glm::translate(model52, glm::vec3(-7.0, -1.1, -19.5));
-		model52 = glm::rotate(model52, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model52 = glm::scale(model52, glm::vec3(0.25f, 0.25f, 0.25f));
-		staticShader->setMat4("model", model52);
-
-		medusa->Draw(*staticShader);
-
-
-
-
 	}
-
 
 
 	{
@@ -877,9 +823,187 @@ bool Update() {
 		wavesShader->setFloat("radius", 5.0f);
 		wavesShader->setFloat("height", 5.0f);
 
-		gridMesh->Draw(*wavesShader);
+		WaterGridMesh->Draw(*wavesShader);
 		wavesTime += 0.01;
 
+	}
+
+	glUseProgram(0);
+
+	/*NENÚFAR*/
+	{
+		// Activamos el shader de Phong
+		nenufarShader->use();
+
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		nenufarShader->setMat4("projection", projection);
+		nenufarShader->setMat4("view", view);
+
+		//Nenúfar 1
+		glm::mat4 modelNenufar1 = glm::mat4(1.0f);
+		modelNenufar1 = glm::translate(modelNenufar1, glm::vec3(0.47129, -0.33, -13.738553));
+		modelNenufar1 = glm::rotate(modelNenufar1, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelNenufar1 = glm::scale(modelNenufar1, glm::vec3(1.5f, 1.5f, 1.5f));
+		nenufarShader->setMat4("model", modelNenufar1);
+
+		nenufarShader->setFloat("time", wavesTime);
+		nenufarShader->setFloat("radius", 5.0f);
+		nenufarShader->setFloat("height", 5.0f);
+
+		NenufarGridMesh->Draw(*nenufarShader);
+
+		//Nenúfar 2
+		glm::mat4 modelNenufar2 = glm::mat4(1.0f);
+		modelNenufar2 = glm::translate(modelNenufar2, glm::vec3(3.0, -0.295, -7.5));
+		modelNenufar2 = glm::rotate(modelNenufar2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelNenufar2 = glm::scale(modelNenufar2, glm::vec3(1.5f, 1.5f, 1.5f));
+		nenufarShader->setMat4("model", modelNenufar2);
+
+		nenufarShader->setFloat("time", wavesTime + 1.57);
+		nenufarShader->setFloat("radius", 5.0f);
+		nenufarShader->setFloat("height", 5.0f);
+
+		NenufarGridMesh->Draw(*nenufarShader);
+
+		//Nenúfar 3
+		glm::mat4 modelNenufar3 = glm::mat4(1.0f);
+		modelNenufar3 = glm::translate(modelNenufar3, glm::vec3(-4.0, -0.265, -15.0));
+		modelNenufar3 = glm::rotate(modelNenufar3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelNenufar3 = glm::scale(modelNenufar3, glm::vec3(1.5f, 1.5f, 1.5f));
+		nenufarShader->setMat4("model", modelNenufar3);
+
+		nenufarShader->setFloat("time", wavesTime + 1.5707);
+		nenufarShader->setFloat("radius", 5.0f);
+		nenufarShader->setFloat("height", 5.0f);
+
+		NenufarGridMesh->Draw(*nenufarShader);
+
+		//Nenúfar 4
+		glm::mat4 modelNenufar4 = glm::mat4(1.0f);
+		modelNenufar4 = glm::translate(modelNenufar4, glm::vec3(-3.0, -0.205, -9.0));
+		modelNenufar4 = glm::rotate(modelNenufar4, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelNenufar4 = glm::scale(modelNenufar4, glm::vec3(1.5f, 1.5f, 1.5f));
+		nenufarShader->setMat4("model", modelNenufar4);
+
+		nenufarShader->setFloat("time", wavesTime + 1.5707);
+		nenufarShader->setFloat("radius", 5.0f);
+		nenufarShader->setFloat("height", 5.0f);
+
+		NenufarGridMesh->Draw(*nenufarShader);
+
+		//Nenúfar 5
+		glm::mat4 modelNenufar5 = glm::mat4(1.0f);
+		modelNenufar5 = glm::translate(modelNenufar5, glm::vec3(6.0, -0.24, -12.0));
+		modelNenufar5 = glm::rotate(modelNenufar5, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelNenufar5 = glm::scale(modelNenufar5, glm::vec3(1.5f, 1.5f, 1.5f));
+		nenufarShader->setMat4("model", modelNenufar5);
+
+		nenufarShader->setFloat("time", wavesTime + 1.5707);
+		nenufarShader->setFloat("radius", 5.0f);
+		nenufarShader->setFloat("height", 5.0f);
+
+		NenufarGridMesh->Draw(*nenufarShader);
+
+	}
+
+	/*MEDUSAS*/
+	{
+		// Activamos el shader de Phong
+		jellyFishShader->use();
+
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		jellyFishShader->setMat4("projection", projection);
+		jellyFishShader->setMat4("view", view);
+
+		//Medusa 1
+		glm::mat4 modelMedusa1 = glm::mat4(1.0f);
+		modelMedusa1 = glm::translate(modelMedusa1, glm::vec3(5.8, -1.3, -10.0));
+		modelMedusa1 = glm::rotate(modelMedusa1, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMedusa1 = glm::scale(modelMedusa1, glm::vec3(0.2f, 0.2f, 0.2f));
+		jellyFishShader->setMat4("model", modelMedusa1);
+
+		jellyFishShader->setFloat("time", wavesTime);
+		jellyFishShader->setFloat("radius", 5.0f);
+		jellyFishShader->setFloat("height", 5.0f);
+
+		medusa->Draw(*jellyFishShader);
+
+		//Medusa 2
+		glm::mat4 modelMedusa2 = glm::mat4(1.0f);
+		modelMedusa2 = glm::translate(modelMedusa2, glm::vec3(0.0, -1.5, -7.0));
+		modelMedusa2 = glm::rotate(modelMedusa2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMedusa2 = glm::scale(modelMedusa2, glm::vec3(0.3f, 0.3f, 0.3f));
+		jellyFishShader->setMat4("model", modelMedusa2);
+
+		jellyFishShader->setFloat("time", wavesTime);
+		jellyFishShader->setFloat("radius", 5.0f);
+		jellyFishShader->setFloat("height", 5.0f);
+
+		medusa->Draw(*jellyFishShader);
+
+		//Medusa 3
+		glm::mat4 modelMedusa3 = glm::mat4(1.0f);
+		modelMedusa3 = glm::translate(modelMedusa3, glm::vec3(-4.8, -1.5, -13.0));
+		modelMedusa3 = glm::rotate(modelMedusa3, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMedusa3 = glm::scale(modelMedusa3, glm::vec3(0.19f, 0.19f, 0.19f));
+		jellyFishShader->setMat4("model", modelMedusa3);
+
+		jellyFishShader->setFloat("time", wavesTime);
+		jellyFishShader->setFloat("radius", 5.0f);
+		jellyFishShader->setFloat("height", 5.0f);
+
+		medusa->Draw(*jellyFishShader);
+
+		//Medusa 4
+		glm::mat4 modelMedusa4 = glm::mat4(1.0f);
+		modelMedusa4 = glm::translate(modelMedusa4, glm::vec3(0.0, -1.3, -11.0));
+		modelMedusa4 = glm::rotate(modelMedusa4, glm::radians(-150.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMedusa4 = glm::scale(modelMedusa4, glm::vec3(0.15f, 0.15f, 0.15f));
+		jellyFishShader->setMat4("model", modelMedusa4);
+
+		jellyFishShader->setFloat("time", wavesTime);
+		jellyFishShader->setFloat("radius", 5.0f);
+		jellyFishShader->setFloat("height", 5.0f);
+
+		medusa->Draw(*jellyFishShader);
+
+		//Medusa 5
+		glm::mat4 modelMedusa5 = glm::mat4(1.0f);
+		modelMedusa5 = glm::translate(modelMedusa5, glm::vec3(4.8, -1.3, -16.0));
+		modelMedusa5 = glm::rotate(modelMedusa5, glm::radians(-120.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMedusa5 = glm::scale(modelMedusa5, glm::vec3(0.2f, 0.2f, 0.2f));
+		jellyFishShader->setMat4("model", modelMedusa5);
+
+		jellyFishShader->setFloat("time", wavesTime);
+		jellyFishShader->setFloat("radius", 5.0f);
+		jellyFishShader->setFloat("height", 5.0f);
+
+		medusa->Draw(*jellyFishShader);
+		
+		//Medusa 6
+		glm::mat4 modelMedusa6 = glm::mat4(1.0f);
+		modelMedusa6 = glm::translate(modelMedusa6, glm::vec3(-7.0, -1.4, -17.5));
+		modelMedusa6 = glm::rotate(modelMedusa6, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMedusa6 = glm::scale(modelMedusa6, glm::vec3(0.25f, 0.25f, 0.25f));
+		jellyFishShader->setMat4("model", modelMedusa6);
+
+		jellyFishShader->setFloat("time", wavesTime);
+		jellyFishShader->setFloat("radius", 5.0f);
+		jellyFishShader->setFloat("height", 5.0f);
+
+		medusa->Draw(*jellyFishShader);
 	}
 
 	glUseProgram(0);
