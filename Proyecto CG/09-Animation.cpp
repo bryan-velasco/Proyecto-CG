@@ -78,6 +78,7 @@ Shader* ourShader;
 Shader* staticShader;
 Shader *cubemapShader;
 Shader* particlesShader;
+Shader* wavesShader;
 
 // Partículas
 Particles particlesSystem(50); // creamos 200 partículas
@@ -121,6 +122,8 @@ Model* agua;		//19
 Model* lancha;		//20
 Model* arena;		//21
 
+Model* gridMesh;
+
 Model* cubeenv;
 
 
@@ -133,6 +136,8 @@ glm::mat4 gBonesBar[MAX_RIGGING_BONES];
 float	fps = 30.0f;
 int		keys = 0;
 int		animationCount = 0;
+
+float wavesTime = 0.0f;
 
 // selección de cámara
 bool    activeCamera = 1; // activamos la primera cámara
@@ -200,6 +205,7 @@ bool Start() {
 	staticShader = new Shader("shaders/10_vertex_simple.vs", "shaders/10_fragment_simple.fs");
 	cubemapShader = new Shader("shaders/10_vertex_cubemap.vs", "shaders/10_fragment_cubemap.fs");
 	particlesShader = new Shader("shaders/13_particles.vs", "shaders/13_particles.fs");
+	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
 
 	particleModel = new Model("models/snow/burbuja.fbx");
 
@@ -223,6 +229,8 @@ bool Start() {
 	flamingo = new Model("models/flamingo/flamingo.fbx");
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
+
+	gridMesh = new Model("models/agua/agua.fbx");
 
 	//nenufar = new Model("models/nenufar/nenufar.fbx");
 	//agua = new Model("models/agua/agua.fbx");
@@ -791,9 +799,6 @@ bool Update() {
 		staticShader->setMat4("model", model);
 
 		cubeenv->Draw(*staticShader);
-
-
-
 	}
 
 
@@ -836,6 +841,39 @@ bool Update() {
 			// Dibujamos el modelo
 			particleModel->Draw(*particlesShader);
 		}
+
+	}
+
+	glUseProgram(0);
+
+	/*OLEAJE*/
+	{
+		// Activamos el shader de Phong
+		wavesShader->use();
+
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		wavesShader->setMat4("projection", projection);
+		wavesShader->setMat4("view", view);
+
+		// Aplicamos transformaciones del modelo
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.47129, -0.80, -13.738553));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		wavesShader->setMat4("model", model);
+
+		wavesShader->setFloat("time", wavesTime);
+		wavesShader->setFloat("radius", 5.0f);
+		wavesShader->setFloat("height", 5.0f);
+
+		gridMesh->Draw(*wavesShader);
+		wavesTime += 0.01;
 
 	}
 
