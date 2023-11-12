@@ -232,6 +232,7 @@ bool Start() {
 	cocodrilo = new Model("models/cocodrilo/cocodrilo.fbx");
 	estrella = new Model("models/estrella/estrella.fbx");
 	flamingo = new Model("models/flamingo/flamingo.fbx");
+	lancha = new Model("models/lancha/lancha.fbx");
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
 
@@ -246,6 +247,12 @@ bool Start() {
 
 	// SoundEngine->play2D("sound/EternalGarden.mp3", true);
 
+	// time, arrays
+	lancha->SetPose(0.0f, gBones);
+
+	fps = (float)lancha->getFramerate();
+	keys = (int)lancha->getNumFrames();
+
 	return true;
 }
 
@@ -258,15 +265,14 @@ bool Update() {
 	elapsedTime += deltaTime;
 	if (elapsedTime > 1.0f / fps) {
 		elapsedTime = 0.0f;
-
 		particlesSystem.UpdatePhysics(deltaTime);
-	}
-	if (elapsedTime > 1.0f / fps) {
+
 		animationCount++;
 		if (animationCount > keys - 1) {
 			animationCount = 0;
 		}
 		// Configuración de la pose en el instante t
+		lancha->SetPose((float)animationCount, gBones);
 		elapsedTime = 0.0f;
 	}
 
@@ -1004,6 +1010,43 @@ bool Update() {
 		jellyFishShader->setFloat("height", 5.0f);
 
 		medusa->Draw(*jellyFishShader);
+	}
+
+	glUseProgram(0);
+
+	//ANIMACIÓN DE LANCHA
+	{
+		// Activación del shader del personaje
+		ourShader->use();
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+
+		glm::mat4 projection;
+		glm::mat4 view;
+
+		if (activeCamera) {
+			projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+			view = camera.GetViewMatrix();
+		}
+		else {
+			projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+			view = camera3rd.GetViewMatrix();
+		}
+
+		ourShader->setMat4("projection", projection);
+		ourShader->setMat4("view", view);
+
+		/*LANCHA*/
+		glm::mat4 modelLancha = glm::mat4(1.0f);
+		modelLancha = glm::translate(modelLancha, glm::vec3(-4.5, -0.45, -7.0));
+		modelLancha = glm::rotate(modelLancha, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelLancha = glm::scale(modelLancha, glm::vec3(0.7f, 0.7f, 0.7f));
+		ourShader->setMat4("model", modelLancha);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBones);
+
+		// Dibujamos el modelo
+		lancha->Draw(*ourShader);
 	}
 
 	glUseProgram(0);
