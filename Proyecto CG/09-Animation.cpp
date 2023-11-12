@@ -179,7 +179,7 @@ bool Start() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Creación de la ventana con GLFW
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FBX Animation with OpenGL", NULL, NULL);
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LA VIDA EN LOS MANGLARES (ESPECIES ENDEMICAS Y EN PELIGRO DE EXTINCIÓN)", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -246,7 +246,7 @@ bool Start() {
 	// CUBO DE FONDO
 	cubeenv = new Model("models/mycube.fbx");
 
-	// SoundEngine->play2D("sound/EternalGarden.mp3", true);
+	SoundEngine->play2D("sound/mar.mp3", true);
 
 	return true;
 }
@@ -745,7 +745,7 @@ bool Update() {
 
 		//MEDUSA 2
 		glm::mat4 model48 = glm::mat4(1.0f);
-		model48 = glm::translate(model48, glm::vec3(0.8, -1.0, -5.0));
+		model48 = glm::translate(model48, glm::vec3(0.8, -1.0, -13.0));
 		model48 = glm::rotate(model48, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model48 = glm::scale(model48, glm::vec3(0.3f, 0.3f, 0.3f));
 		staticShader->setMat4("model", model48);
