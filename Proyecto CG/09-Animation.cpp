@@ -86,6 +86,7 @@ Shader *cubemapShader;
 Shader* particlesShader;
 Shader* wavesShader;
 Shader* nenufarShader;
+Shader* lirioShader;
 Shader* jellyFishShader;
 Shader* proceduralShader;
 
@@ -107,7 +108,7 @@ ISoundEngine* SoundEngine = createIrrKlangDevice();
 
 // Carga la información del modelo
 
-Model* lirio;		//1
+//Model* lirio;		//1
 Model* nenufar;		//2
 Model* cocodrilo;	//3
 Model* tortuga;		//4
@@ -135,6 +136,7 @@ Model* ave;			//23
 
 Model* WaterGridMesh;
 Model* NenufarGridMesh;
+Model* lirioGridMesh;
 
 Model* cubeenv;
 
@@ -228,6 +230,7 @@ bool Start() {
 	particlesShader = new Shader("shaders/13_particles.vs", "shaders/13_particles.fs");
 	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
 	nenufarShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
+	lirioShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
 	jellyFishShader = new Shader("shaders/14_jellyFishAnimation.vs", "shaders/10_fragment_simple.fs");
 	proceduralShader = new Shader("shaders/12_ProceduralAnimation.vs", "shaders/12_ProceduralAnimation.fs");
 
@@ -259,8 +262,10 @@ bool Start() {
 	alga = new Model("models/alga/alga.fbx");
 	ave = new Model("models/ave/ave.fbx");
 
+
 	WaterGridMesh = new Model("models/agua/agua.fbx");
 	NenufarGridMesh = new Model("models/nenufar/nenufar.fbx");
+	lirioGridMesh = new Model("models/lirio/lirio.fbx");
 
 	//nenufar = new Model("models/nenufar/nenufar.fbx");
 
@@ -1151,6 +1156,33 @@ bool Update() {
 		nenufarShader->setFloat("height", 5.0f);
 
 		NenufarGridMesh->Draw(*nenufarShader);
+
+
+
+		////LIRIO
+		//lirioShader->use();
+
+		//// Activamos para objetos transparentes
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+		//// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		//lirioShader->setMat4("projection", projection);
+		//lirioShader->setMat4("view", view);
+
+		////Lirio 1
+		//glm::mat4 lirio = glm::mat4(1.0f);
+		//lirio = glm::translate(lirio, glm::vec3(6.0, -0.24, -12.0));
+		//lirio = glm::rotate(lirio, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//lirio = glm::scale(lirio, glm::vec3(10.5f, 10.5f, 10.5f));
+		//lirioShader->setMat4("model", lirio);
+
+		//lirioShader->setFloat("time", wavesTime + 1.5707);
+		//lirioShader->setFloat("radius", 5.0f);
+		//lirioShader->setFloat("height", 5.0f);
+
+		//lirioGridMesh->Draw(*lirioShader);
 
 	}
 
