@@ -32,7 +32,7 @@ using namespace irrklang;
 
 
 // Max number of bones
-#define MAX_RIGGING_BONES 100
+#define MAX_RIGGING_BONES 300
 
 // Functions
 bool Start();
@@ -64,7 +64,12 @@ bool firstMouse = true;
 // de la animación
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+float deltaTimeAlga = 0.0f;
+float lastFrameAlga = 0.0f;
+
 float elapsedTime = 0.0f;
+float elapsedTimeAlga = 0.0f;
 
 float     rotateCharacter = 0.0f;
 glm::vec3 position(0.0f, 0.0f, 0.0f);
@@ -137,9 +142,16 @@ Model* cubeenv;
 glm::mat4 gBones[MAX_RIGGING_BONES];
 glm::mat4 gBonesBar[MAX_RIGGING_BONES];
 
+//LANCHA
 float	fps = 30.0f;
 int		keys = 0;
 int		animationCount = 0;
+
+
+//ALGA
+float	fpsAlga = 30.0f;
+int		keysAlga = 0;
+int		animationCountAlga = 0;
 
 float wavesTime = 0.0f;
 
@@ -179,7 +191,7 @@ bool Start() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Creación de la ventana con GLFW
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LA VIDA EN LOS MANGLARES (ESPECIES ENDEMICAS Y EN PELIGRO DE EXTINCIÓN)", NULL, NULL);
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LA VIDA EN LOS MANGLARES (ESPECIES ENDEMICAS Y EN PELIGRO DE EXTINCIÓN", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -237,6 +249,8 @@ bool Start() {
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
 	roca = new Model("models/roca/roca.fbx");
+	garza = new Model("models/garza/garza.fbx");
+	alga = new Model("models/alga/alga.fbx");
 
 
 	WaterGridMesh = new Model("models/agua/agua.fbx");
@@ -250,10 +264,17 @@ bool Start() {
 	SoundEngine->play2D("sound/mar.mp3", true);
 
 	// time, arrays
+	//LANCHA
 	lancha->SetPose(0.0f, gBones);
 
 	fps = (float)lancha->getFramerate();
 	keys = (int)lancha->getNumFrames();
+
+	//ALGAS
+	alga->SetPose(0.0f, gBones);
+
+	fpsAlga = (float)alga->getFramerate();
+	keysAlga = (int)alga->getNumFrames();
 
 	return true;
 }
@@ -264,18 +285,44 @@ bool Update() {
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
+	// Cálculo del framerate
+	float currentFrameAlga = (float)glfwGetTime();
+	deltaTimeAlga = currentFrame - lastFrameAlga;
+	lastFrameAlga = currentFrame;
+
 	elapsedTime += deltaTime;
 	if (elapsedTime > 1.0f / fps) {
 		elapsedTime = 0.0f;
 		particlesSystem.UpdatePhysics(deltaTime);
 
 		animationCount++;
+
+		//LANCHA
 		if (animationCount > keys - 1) {
 			animationCount = 0;
 		}
 		// Configuración de la pose en el instante t
 		lancha->SetPose((float)animationCount, gBones);
+
 		elapsedTime = 0.0f;
+
+	}
+
+	if (elapsedTimeAlga > 1.0f / fpsAlga) {
+		elapsedTimeAlga = 0.0f;
+	
+		animationCountAlga++;
+
+		//LANCHA
+		if (animationCountAlga > keysAlga - 1) {
+			animationCountAlga = 0;
+		}
+
+		// Configuración de la pose en el instante t
+		alga->SetPose((float)animationCountAlga, gBones);
+		elapsedTimeAlga = 0.0f;
+
+
 	}
 
 
@@ -871,6 +918,45 @@ bool Update() {
 
 		roca->Draw(*staticShader);
 
+		//ROCA 9
+		glm::mat4 model61 = glm::mat4(1.0f);
+		model61 = glm::translate(model61, glm::vec3(8.0, -1.9, -13.2));
+		model61 = glm::rotate(model61, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model61 = glm::scale(model61, glm::vec3(0.4f, 0.9f, 0.7f));
+		staticShader->setMat4("model", model61);
+
+		roca->Draw(*staticShader);
+
+		//ROCA 10
+		glm::mat4 model62 = glm::mat4(1.0f);
+		model62 = glm::translate(model62, glm::vec3(8.0, -1.9, -13.2));
+		model62 = glm::rotate(model62, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model62 = glm::scale(model62, glm::vec3(0.4f, 0.9f, 1.2f));
+		staticShader->setMat4("model", model62);
+
+		roca->Draw(*staticShader);
+
+		//GARZA 1
+		glm::mat4 model63 = glm::mat4(1.0f);
+		model63 = glm::translate(model63, glm::vec3(7.9, -0.65, -13.1));
+		model63 = glm::rotate(model63, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model63 = glm::rotate(model63, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model63 = glm::scale(model63, glm::vec3(0.8f, 0.8, 0.8f));
+		staticShader->setMat4("model", model63);
+
+		garza->Draw(*staticShader);
+
+		//GARZA 2
+		glm::mat4 model64 = glm::mat4(1.0f);
+		model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
+		model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
+		staticShader->setMat4("model", model64);
+
+		garza->Draw(*staticShader);
+
+
 
 	}
 
@@ -1152,7 +1238,7 @@ bool Update() {
 
 	glUseProgram(0);
 
-	//ANIMACIÓN DE LANCHA
+	//ANIMACIONES
 	{
 		// Activación del shader del personaje
 		ourShader->use();
@@ -1178,13 +1264,49 @@ bool Update() {
 		glm::mat4 modelLancha = glm::mat4(1.0f);
 		modelLancha = glm::translate(modelLancha, glm::vec3(-4.5, -0.45, -7.0));
 		modelLancha = glm::rotate(modelLancha, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelLancha = glm::scale(modelLancha, glm::vec3(0.7f, 0.7f, 0.7f));
+		modelLancha = glm::scale(modelLancha, glm::vec3(0.09f, 0.09f, 0.09f));
 		ourShader->setMat4("model", modelLancha);
 
 		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBones);
 
 		// Dibujamos el modelo
 		lancha->Draw(*ourShader);
+
+	}
+
+	//ANIMACIONES
+	{
+		// Activación del shader del personaje
+		ourShader->use();
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+
+		glm::mat4 projection;
+		glm::mat4 view;
+
+		if (activeCamera) {
+			projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+			view = camera.GetViewMatrix();
+		}
+		else {
+			projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+			view = camera3rd.GetViewMatrix();
+		}
+
+		ourShader->setMat4("projection", projection);
+		ourShader->setMat4("view", view);
+
+		//ALGA
+		glm::mat4 modelAlga = glm::mat4(1.0f);
+		modelAlga = glm::translate(modelAlga, glm::vec3(4.5, -0.45, -7.0));
+		modelAlga = glm::rotate(modelAlga, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelAlga = glm::scale(modelAlga, glm::vec3(0.1f, 0.1f, 0.1f));
+		ourShader->setMat4("model", modelAlga);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBones);
+
+		// Dibujamos el modelo
+		alga->Draw(*ourShader);
 	}
 
 	glUseProgram(0);
