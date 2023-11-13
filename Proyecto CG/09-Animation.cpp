@@ -71,12 +71,13 @@ float lastFrameAlga = 0.0f;
 float elapsedTime = 0.0f;
 float elapsedTimeAlga = 0.0f;
 
-float     rotateCharacter = 0.0f;
+float  rotateCharacter = 0.0f;
 glm::vec3 position(0.0f, 0.0f, 0.0f);
 glm::vec3 forwardView(0.0f, 0.0f, 1.0f);
 
-float     scaleV = 0.005f;
+float   scaleV = 0.005f;
 
+float sineTime = 0.0f;
 
 // Shaders
 Shader* ourShader;
@@ -86,6 +87,7 @@ Shader* particlesShader;
 Shader* wavesShader;
 Shader* nenufarShader;
 Shader* jellyFishShader;
+Shader* proceduralShader;
 
 // Partículas
 Particles particlesSystem(70); // creamos 200 partículas
@@ -129,6 +131,7 @@ Model* agua;		//19
 Model* lancha;		//20
 Model* arena;		//21
 Model* roca;		//22
+Model* ave;			//23
 
 Model* WaterGridMesh;
 Model* NenufarGridMesh;
@@ -153,7 +156,9 @@ float	fpsAlga = 30.0f;
 int		keysAlga = 0;
 int		animationCountAlga = 0;
 
+
 float wavesTime = 0.0f;
+float proceduralTime = 0.0f;
 
 // selección de cámara
 bool    activeCamera = 1; // activamos la primera cámara
@@ -174,7 +179,7 @@ int main()
 	// Loop de renderizado
 	while (!glfwWindowShouldClose(window))
 	{
-
+		
 	}
 
 	// glfw: Terminamos el programa y liberamos memoria
@@ -224,6 +229,7 @@ bool Start() {
 	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
 	nenufarShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
 	jellyFishShader = new Shader("shaders/14_jellyFishAnimation.vs", "shaders/10_fragment_simple.fs");
+	proceduralShader = new Shader("shaders/12_ProceduralAnimation.vs", "shaders/12_ProceduralAnimation.fs");
 
 	particleModel = new Model("models/snow/burbuja.fbx");
 
@@ -251,7 +257,7 @@ bool Start() {
 	roca = new Model("models/roca/roca.fbx");
 	garza = new Model("models/garza/garza.fbx");
 	alga = new Model("models/alga/alga.fbx");
-
+	ave = new Model("models/ave/ave.fbx");
 
 	WaterGridMesh = new Model("models/agua/agua.fbx");
 	NenufarGridMesh = new Model("models/nenufar/nenufar.fbx");
@@ -275,6 +281,12 @@ bool Start() {
 
 	fpsAlga = (float)alga->getFramerate();
 	keysAlga = (int)alga->getNumFrames();
+
+
+	camera3rd.Position = position;
+	camera3rd.Position.y += 1.7f;
+	camera3rd.Position -= forwardView;
+	camera3rd.Front = forwardView;
 
 	return true;
 }
@@ -1275,38 +1287,111 @@ bool Update() {
 	}
 
 	//ANIMACIONES
+	//{
+	//	// Activación del shader del personaje
+	//	ourShader->use();
+
+	//	// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+
+	//	glm::mat4 projection;
+	//	glm::mat4 view;
+
+	//	if (activeCamera) {
+	//		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+	//		view = camera.GetViewMatrix();
+	//	}
+	//	else {
+	//		projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+	//		view = camera3rd.GetViewMatrix();
+	//	}
+
+	//	ourShader->setMat4("projection", projection);
+	//	ourShader->setMat4("view", view);
+
+	//	//ALGA
+	//	glm::mat4 modelAlga = glm::mat4(1.0f);
+	//	modelAlga = glm::translate(modelAlga, glm::vec3(4.5, -0.45, -7.0));
+	//	modelAlga = glm::rotate(modelAlga, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//	modelAlga = glm::scale(modelAlga, glm::vec3(0.1f, 0.1f, 0.1f));
+	//	ourShader->setMat4("model", modelAlga);
+
+	//	ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBones);
+
+	//	// Dibujamos el modelo
+	//	alga->Draw(*ourShader);
+	//}
+
 	{
-		// Activación del shader del personaje
-		ourShader->use();
+		//Activamos el shader de Phong
+		proceduralShader->use();
+
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		proceduralShader->setMat4("projection", projection);
+		proceduralShader->setMat4("view", view);
 
-		glm::mat4 projection;
-		glm::mat4 view;
+		// Aplicamos transformaciones del modelo
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.47129, 2.1, -13.738553));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+		proceduralShader->setMat4("model", model);
 
-		if (activeCamera) {
-			projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-			view = camera.GetViewMatrix();
-		}
-		else {
-			projection = glm::perspective(glm::radians(camera3rd.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-			view = camera3rd.GetViewMatrix();
-		}
+		proceduralShader->setFloat("time", proceduralTime);
+		proceduralShader->setFloat("radius", 5.0f);
+		proceduralShader->setFloat("height", 0.0f);
 
-		ourShader->setMat4("projection", projection);
-		ourShader->setMat4("view", view);
+		ave->Draw(*proceduralShader);
+		proceduralTime += 0.01;
 
-		//ALGA
-		glm::mat4 modelAlga = glm::mat4(1.0f);
-		modelAlga = glm::translate(modelAlga, glm::vec3(4.5, -0.45, -7.0));
-		modelAlga = glm::rotate(modelAlga, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelAlga = glm::scale(modelAlga, glm::vec3(0.1f, 0.1f, 0.1f));
-		ourShader->setMat4("model", modelAlga);
+		// Aplicamos transformaciones del modelo
+		glm::mat4 model1 = glm::mat4(1.0f);
+		model1 = glm::translate(model1, glm::vec3(0.7, 1.3, -17.738553));
+		model1 = glm::rotate(model1, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model1 = glm::scale(model1, glm::vec3(0.09f, 0.09f, 0.09f));
+		proceduralShader->setMat4("model", model1);
 
-		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBones);
+		proceduralShader->setFloat("time", proceduralTime);
+		proceduralShader->setFloat("radius", 1.0f);
+		proceduralShader->setFloat("height", 0.1f);
 
-		// Dibujamos el modelo
-		alga->Draw(*ourShader);
+		ave->Draw(*proceduralShader);
+		proceduralTime += 0.01;
+
+		// Aplicamos transformaciones del modelo
+		glm::mat4 model2 = glm::mat4(1.0f);
+		model2 = glm::translate(model2, glm::vec3(-6.7, 1.3, -9.738553));
+		model2 = glm::rotate(model2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model2 = glm::scale(model2, glm::vec3(0.07f, 0.07f, 0.07f));
+		proceduralShader->setMat4("model", model2);
+
+		proceduralShader->setFloat("time", proceduralTime);
+		proceduralShader->setFloat("radius", 0.3f);
+		proceduralShader->setFloat("height", 0.2f);
+
+		ave->Draw(*proceduralShader);
+		proceduralTime += 0.01;
+
+
+		// Aplicamos transformaciones del modelo
+		glm::mat4 model3 = glm::mat4(1.0f);
+		model3 = glm::translate(model3, glm::vec3(6.7, 0.9, -3.738553));
+		model3 = glm::rotate(model3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model3 = glm::scale(model3, glm::vec3(0.06f, 0.06f, 0.06f));
+		proceduralShader->setMat4("model", model3);
+
+		proceduralShader->setFloat("time", proceduralTime);
+		proceduralShader->setFloat("radius", 0.5f);
+		proceduralShader->setFloat("height", 0.01f);
+
+		ave->Draw(*proceduralShader);
+		proceduralTime += 0.001;
+
 	}
 
 	glUseProgram(0);

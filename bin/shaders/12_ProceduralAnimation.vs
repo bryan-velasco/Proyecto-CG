@@ -17,13 +17,16 @@ uniform float height;
 
 void main()
 {
-    
     vec4 PosL = vec4(aPos, 1.0f);
-    PosL.x += radius * cos(time);
-    PosL.y += radius * sin(time);
-    PosL.z += height;
+
+    // Movimiento circular
+    PosL.x += 20 * radius * sin(2 * time) * cos(2 * time);
+    PosL.y += 20 * radius * sin(2 * time);
+    PosL.z += radius * cos(2 * time);
+
+    // Agregar movimiento de arriba a abajo
+    PosL.y += height * sin(time);  // Ajusta la amplitud según sea necesario
 
     gl_Position = projection * view * model * PosL;
-
-    TexCoords = aTexCoords;  
+    TexCoords = aTexCoords;
 }
