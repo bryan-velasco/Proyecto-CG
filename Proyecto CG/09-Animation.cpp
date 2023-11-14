@@ -85,6 +85,7 @@ Shader* jellyFishShader;
 Shader* phongShader;
 Shader* fresnelShader;
 Shader* proceduralShader;
+Shader* proceduralShaderObjects;
 
 // Partículas
 Particles particlesSystem(70); // creamos 200 partículas
@@ -235,6 +236,7 @@ bool Start() {
 	nenufarShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
 	jellyFishShader = new Shader("shaders/14_jellyFishAnimation.vs", "shaders/10_fragment_simple.fs");
 	proceduralShader = new Shader("shaders/12_ProceduralAnimation.vs", "shaders/12_ProceduralAnimation.fs");
+	proceduralShaderObjects = new Shader("shaders/12_ProceduralAnimationObjects.vs", "shaders/12_ProceduralAnimation.fs");
 
 	particleModel = new Model("models/snow/burbuja.fbx");
 
@@ -252,6 +254,7 @@ bool Start() {
 	lataCoca = new Model("models/lataCoca/lataCoca.fbx");
 	lataFanta = new Model("models/lataCoca/lataFanta.fbx");
 	lataSprite = new Model("models/lataCoca/lataSprite.fbx");
+	bolsa = new Model("models/bolsa/bolsa.fbx");
 	ostra = new Model("models/ostra/ostra.fbx");
 	cocodrilo = new Model("models/cocodrilo/cocodrilo.fbx");
 	estrella = new Model("models/estrella/estrella.fbx");
@@ -368,6 +371,7 @@ bool Update() {
 		staticShader->setMat4("model", model);
 
 		arena->Draw(*staticShader);
+
 
 		// MANGLE 1 --> EL DE LA DERECHA (EL PRIMERO DE LA DERECHA)
 		glm::mat4 model1 = glm::mat4(1.0f);
@@ -1338,7 +1342,7 @@ bool Update() {
 
 		// MANATI
 		glm::mat4 modelManati = glm::mat4(1.0f);
-		modelManati = glm::translate(modelManati, glm::vec3(7.0, -1.4, -17.0)); // translate it down so it's at the center of the 
+		modelManati = glm::translate(modelManati, glm::vec3(6.0, -1.4, -17.0)); // translate it down so it's at the center of the 
 		modelManati = glm::rotate(modelManati, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelManati = glm::scale(modelManati, glm::vec3(0.09f, 0.09f, 0.09f));
 		ourShader->setMat4("model", modelManati);
@@ -1349,7 +1353,7 @@ bool Update() {
 
 		// MANATI BEBE
 		glm::mat4 modelManatiBebe = glm::mat4(1.0f);
-		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(6.0, -1.4, -15.0)); // translate it down so it's at the center of the 
+		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(5.0, -1.4, -15.0)); // translate it down so it's at the center of the 
 		modelManatiBebe = glm::rotate(modelManatiBebe, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelManatiBebe = glm::scale(modelManatiBebe, glm::vec3(0.03f, 0.03f, 0.03f));
 		ourShader->setMat4("model", modelManatiBebe);
@@ -1406,6 +1410,33 @@ bool Update() {
 		glm::mat4 view = camera.GetViewMatrix();
 		proceduralShader->setMat4("projection", projection);
 		proceduralShader->setMat4("view", view);
+
+		// BOLSA
+		glm::mat4 modelBolsa = glm::mat4(1.0f);
+		modelBolsa = glm::translate(modelBolsa, glm::vec3(-3.0, -1.6, -15.5)); // translate it down so it's at the center of the 
+		modelBolsa = glm::rotate(modelBolsa, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBolsa = glm::scale(modelBolsa, glm::vec3(0.2f, 0.2f, 0.2f));
+		proceduralShaderObjects->setMat4("model", modelBolsa);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime);
+		proceduralShaderObjects->setFloat("radius", 0.3f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		bolsa->Draw(*proceduralShaderObjects);
+
+		// BOLSA
+		glm::mat4 modelBolsa2 = glm::mat4(1.0f);
+		modelBolsa2 = glm::translate(modelBolsa2, glm::vec3(3.0, -1.6, -12.0)); // translate it down so it's at the center of the 
+		modelBolsa2 = glm::rotate(modelBolsa2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBolsa2 = glm::scale(modelBolsa2, glm::vec3(0.1f, 0.1f, 0.1f));
+		proceduralShaderObjects->setMat4("model", modelBolsa2);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 20);
+		proceduralShaderObjects->setFloat("radius", 0.2f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		bolsa->Draw(*proceduralShaderObjects);
+
 
 		// Aplicamos transformaciones del modelo
 		glm::mat4 model = glm::mat4(1.0f);
