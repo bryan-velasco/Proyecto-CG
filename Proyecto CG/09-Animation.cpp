@@ -82,6 +82,7 @@ Shader* particlesShader;
 Shader* wavesShader;
 Shader* nenufarShader;
 Shader* jellyFishShader;
+Shader* boaShader;
 Shader* phongShader;
 Shader* fresnelShader;
 Shader* proceduralShader;
@@ -235,6 +236,7 @@ bool Start() {
 	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
 	nenufarShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
 	jellyFishShader = new Shader("shaders/14_jellyFishAnimation.vs", "shaders/10_fragment_simple.fs");
+	boaShader = new Shader("shaders/14_BoaAnimation.vs", "shaders/10_fragment_simple.fs");
 	proceduralShader = new Shader("shaders/12_ProceduralAnimation.vs", "shaders/12_ProceduralAnimation.fs");
 	proceduralShaderObjects = new Shader("shaders/12_ProceduralAnimationObjects.vs", "shaders/12_ProceduralAnimation.fs");
 
@@ -263,6 +265,7 @@ bool Start() {
 	tortuga = new Model("models/tortuga/SeaTurtle.fbx");
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
+	boa = new Model("models/boa/boa.fbx");
 	manati = new Model("models/manati/manati.fbx");
 	roca = new Model("models/roca/roca.fbx");
 	garza = new Model("models/garza/garza.fbx");
@@ -1302,6 +1305,37 @@ bool Update() {
 		jellyFishShader->setFloat("height", 5.0f);
 
 		medusa->Draw(*jellyFishShader);
+	}
+
+	glUseProgram(0);
+
+	/*BOA*/
+	{
+		// Activamos el shader de Phong
+		boaShader->use();
+
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		boaShader->setMat4("projection", projection);
+		boaShader->setMat4("view", view);
+
+		//Boa
+		glm::mat4 modelBoa = glm::mat4(1.0f);
+		modelBoa = glm::translate(modelBoa, glm::vec3(-3.0, -2.0, -17.5));
+		modelBoa = glm::rotate(modelBoa, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBoa = glm::scale(modelBoa, glm::vec3(0.2f, 0.2f, 0.2f));
+		boaShader->setMat4("model", modelBoa);
+
+		boaShader->setFloat("time", wavesTime*5);
+		boaShader->setFloat("radius", 5.0f);
+		boaShader->setFloat("height", 5.0f);
+
+		boa->Draw(*boaShader);
 	}
 
 	glUseProgram(0);
