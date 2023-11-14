@@ -136,13 +136,28 @@ Model* cubeenv;
 
 
 
-// Pose inicial del modelo
+// Pose inicial de Lancha
 glm::mat4 gBones[MAX_RIGGING_BONES];
 glm::mat4 gBonesBar[MAX_RIGGING_BONES];
 
+// Pose inicial de Manati
+glm::mat4 gBonesManati[MAX_RIGGING_BONES];
+
+// Pose inicial de Tortuga
+glm::mat4 gBonesTortuga[MAX_RIGGING_BONES];
+
 float	fps = 30.0f;
 int		keys = 0;
+
+float	fpsManati = 30.0f;
+int		keysManati = 0;
+
+float	fpsTortuga = 30.0f;
+int		keysTortuga = 0;
+
 int		animationCount = 0;
+int		animationCountManati = 0;
+int		animationCountTortuga = 0;
 
 float wavesTime = 0.0f;
 float proceduralTime = 0.0f;
@@ -240,8 +255,10 @@ bool Start() {
 	estrella = new Model("models/estrella/estrella.fbx");
 	flamingo = new Model("models/flamingo/flamingo.fbx");
 	lancha = new Model("models/lancha/lancha.fbx");
+	tortuga = new Model("models/tortuga/SeaTurtle.fbx");
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
+	manati = new Model("models/manati/manati.fbx");
 	roca = new Model("models/roca/roca.fbx");
 	garza = new Model("models/garza/garza.fbx");
 	alga = new Model("models/alga/alga.fbx");
@@ -258,11 +275,20 @@ bool Start() {
 
 	//SoundEngine->play2D("sound/mar.mp3", true);
 
-	// time, arrays
+	//Inicialización Lancha
 	lancha->SetPose(0.0f, gBones);
-
 	fps = (float)lancha->getFramerate();
 	keys = (int)lancha->getNumFrames();
+
+	//Inicialización Manati
+	manati->SetPose(0.0f, gBonesManati);
+	fpsManati = (float)manati->getFramerate();
+	keysManati = (int)manati->getNumFrames();
+
+	//Inicialización Tortuga
+	tortuga->SetPose(0.0f, gBonesTortuga);
+	fpsTortuga = (float)tortuga->getFramerate();
+	keysTortuga = (int)tortuga->getNumFrames();
 
 	camera3rd.Position = position;
 	camera3rd.Position.y += 1.7f;
@@ -287,8 +313,20 @@ bool Update() {
 		if (animationCount > keys - 1) {
 			animationCount = 0;
 		}
-		// Configuración de la pose en el instante t
 		lancha->SetPose((float)animationCount, gBones);
+
+		animationCountManati++;
+		if (animationCountManati > keysManati - 1) {
+			animationCountManati = 0;
+		}
+		manati->SetPose((float)animationCountManati, gBonesManati);
+
+		animationCountTortuga++;
+		if (animationCountTortuga > keysTortuga - 1) {
+			animationCountTortuga = 0;
+		}
+		tortuga->SetPose((float)animationCountTortuga, gBonesTortuga);
+
 		elapsedTime = 0.0f;
 	}
 
@@ -328,7 +366,6 @@ bool Update() {
 		staticShader->setMat4("model", model);
 
 		arena->Draw(*staticShader);
-
 
 		// MANGLE 1 --> EL DE LA DERECHA (EL PRIMERO DE LA DERECHA)
 		glm::mat4 model1 = glm::mat4(1.0f);
@@ -1304,6 +1341,29 @@ bool Update() {
 
 		// Dibujamos el modelo
 		lancha->Draw(*ourShader);
+
+		// MANATI
+		glm::mat4 modelManati = glm::mat4(1.0f);
+		modelManati = glm::translate(modelManati, glm::vec3(7.0, -1.5, -20.0)); // translate it down so it's at the center of the 
+		modelManati = glm::rotate(modelManati, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelManati = glm::scale(modelManati, glm::vec3(0.07f, 0.07f, 0.07f));
+		ourShader->setMat4("model", modelManati);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesManati);
+
+		manati->Draw(*ourShader);
+
+		// TORTUGA
+		glm::mat4 modelTortuga = glm::mat4(1.0f);
+		modelTortuga = glm::translate(modelTortuga, glm::vec3(-5.5, -1.4, -8.0)); // translate it down so it's at the center of the 
+		modelTortuga = glm::rotate(modelTortuga, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelTortuga = glm::scale(modelTortuga, glm::vec3(0.1f, 0.1f, 0.1f));
+		ourShader->setMat4("model", modelTortuga);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesTortuga);
+
+		tortuga->Draw(*ourShader);
+
 	}
 
 	{
