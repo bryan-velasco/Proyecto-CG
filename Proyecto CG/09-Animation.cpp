@@ -132,13 +132,21 @@ Model* cubeenv;
 
 
 
-// Pose inicial del modelo
+// Pose inicial de Lancha
 glm::mat4 gBones[MAX_RIGGING_BONES];
 glm::mat4 gBonesBar[MAX_RIGGING_BONES];
 
+// Pose inicial de Tortuga
+glm::mat4 gBonesManati[MAX_RIGGING_BONES];
+
 float	fps = 30.0f;
 int		keys = 0;
+
+float	fpsManati = 30.0f;
+int		keysManati = 0;
+
 int		animationCount = 0;
+int		animationCountManati = 0;
 
 float wavesTime = 0.0f;
 
@@ -233,8 +241,10 @@ bool Start() {
 	estrella = new Model("models/estrella/estrella.fbx");
 	flamingo = new Model("models/flamingo/flamingo.fbx");
 	lancha = new Model("models/lancha/lancha.fbx");
+	//tortuga = new Model("models/tortuga/SeaTurtle.fbx");
 	cangrejo = new Model("models/cangrejo/cangrejo.fbx");
 	medusa = new Model("models/medusa/medusa.fbx");
+	manati = new Model("models/manati/manati.fbx");
 
 
 	WaterGridMesh = new Model("models/agua/agua.fbx");
@@ -247,11 +257,15 @@ bool Start() {
 
 	// SoundEngine->play2D("sound/EternalGarden.mp3", true);
 
-	// time, arrays
+	//Inicialización Lancha
 	lancha->SetPose(0.0f, gBones);
-
 	fps = (float)lancha->getFramerate();
 	keys = (int)lancha->getNumFrames();
+
+	//Inicialización Manati
+	manati->SetPose(0.0f, gBonesManati);
+	fpsManati = (float)manati->getFramerate();
+	keysManati = (int)manati->getNumFrames();
 
 	return true;
 }
@@ -271,8 +285,14 @@ bool Update() {
 		if (animationCount > keys - 1) {
 			animationCount = 0;
 		}
-		// Configuración de la pose en el instante t
 		lancha->SetPose((float)animationCount, gBones);
+
+		animationCountManati++;
+		if (animationCountManati > keysManati - 1) {
+			animationCountManati = 0;
+		}
+		manati->SetPose((float)animationCountManati, gBonesManati);
+
 		elapsedTime = 0.0f;
 	}
 
@@ -312,7 +332,6 @@ bool Update() {
 		staticShader->setMat4("model", model);
 
 		arena->Draw(*staticShader);
-
 
 		// MANGLE 1 --> EL DE LA DERECHA (EL PRIMERO DE LA DERECHA)
 		glm::mat4 model1 = glm::mat4(1.0f);
@@ -1014,7 +1033,7 @@ bool Update() {
 
 	glUseProgram(0);
 
-	//ANIMACIÓN DE LANCHA
+	//ANIMACIÓN POR KEYFRAMES
 	{
 		// Activación del shader del personaje
 		ourShader->use();
@@ -1047,6 +1066,17 @@ bool Update() {
 
 		// Dibujamos el modelo
 		lancha->Draw(*ourShader);
+
+		// MANATI
+		glm::mat4 modelManati = glm::mat4(1.0f);
+		modelManati = glm::translate(modelManati, glm::vec3(7.0, -1.5, -20.0)); // translate it down so it's at the center of the 
+		modelManati = glm::rotate(modelManati, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelManati = glm::scale(modelManati, glm::vec3(0.07f, 0.07f, 0.07f));
+		ourShader->setMat4("model", modelManati);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesManati);
+
+		manati->Draw(*ourShader);
 	}
 
 	glUseProgram(0);
