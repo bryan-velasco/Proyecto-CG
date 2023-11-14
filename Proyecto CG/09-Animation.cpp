@@ -82,6 +82,8 @@ Shader* particlesShader;
 Shader* wavesShader;
 Shader* nenufarShader;
 Shader* jellyFishShader;
+Shader* phongShader;
+Shader* fresnelShader;
 Shader* proceduralShader;
 
 // Partículas
@@ -959,75 +961,67 @@ bool Update() {
 
 		garza->Draw(*staticShader);
 
-		////ALGA 1
-		//glm::mat4 model65 = glm::mat4(1.0f);
-		//model65 = glm::translate(model65, glm::vec3(7.65, -0.85, -13.1));
-		//model65 = glm::rotate(model65, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model65 = glm::rotate(model65, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model65 = glm::scale(model65, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model65);
+		//ALGA 1
+		glm::mat4 model65 = glm::mat4(1.0f);
+		model65 = glm::translate(model65, glm::vec3(4.47129, -2.1, -18.738553));
+		model65 = glm::rotate(model65, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model65 = glm::rotate(model65, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model65 = glm::scale(model65, glm::vec3(0.8f, 0.8, 1.6f));
+		staticShader->setMat4("model", model65);
 
-		//garza->Draw(*staticShader);
+		alga->Draw(*staticShader);
 
-		////ALGA 2
-		//glm::mat4 model66 = glm::mat4(1.0f);
-		//model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model64);
+		//ALGA 2
+		glm::mat4 model66 = glm::mat4(1.0f);
+		model66 = glm::translate(model66, glm::vec3(-5.47129, -2.1, -7.738553));
+		model66 = glm::rotate(model66, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model66 = glm::rotate(model66, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model66 = glm::scale(model66, glm::vec3(0.8f, 0.8, 1.5f));
+		staticShader->setMat4("model", model66);
 
-		//garza->Draw(*staticShader);
+		alga->Draw(*staticShader);
 
-		////ALGA 3
-		//glm::mat4 model64 = glm::mat4(1.0f);
-		//model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model64);
+		//ALGA 3
+		glm::mat4 model67 = glm::mat4(1.0f);
+		model67 = glm::translate(model67, glm::vec3(6.0, -2.1, -19.738553));
+		model67 = glm::rotate(model67, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model67 = glm::rotate(model67, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model67 = glm::scale(model67, glm::vec3(0.8f, 0.8, 1.6f));
+		staticShader->setMat4("model", model67);
 
-		//garza->Draw(*staticShader);
+		alga->Draw(*staticShader);
 
-		////ALGA 4
-		//glm::mat4 model64 = glm::mat4(1.0f);
-		//model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model64);
+		//ALGA 4
+		glm::mat4 model68 = glm::mat4(1.0f);
+		model68 = glm::translate(model68, glm::vec3(- 4.0, -2.1, -19.738553));
+		model68 = glm::rotate(model68, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model68 = glm::rotate(model68, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model68 = glm::scale(model68, glm::vec3(0.8f, 0.8, 1.6f));
+		staticShader->setMat4("model", model68);
 
-		//garza->Draw(*staticShader);
+		alga->Draw(*staticShader);
 
-		////ALGA 5
-		//glm::mat4 model64 = glm::mat4(1.0f);
-		//model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model64);
+		//ALGA 5
+		glm::mat4 model69 = glm::mat4(1.0f);
+		model69 = glm::translate(model69, glm::vec3(7.0, -2.1, -6.1));
+		model69 = glm::rotate(model69, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model69 = glm::rotate(model69, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model69 = glm::scale(model69, glm::vec3(0.8f, 0.8, 0.8f));
+		staticShader->setMat4("model", model69);
 
-		//garza->Draw(*staticShader);
+		alga->Draw(*staticShader);
 
-		////ALGA 6
-		//glm::mat4 model64 = glm::mat4(1.0f);
-		//model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model64);
+		//ALGA 6
+		glm::mat4 model70 = glm::mat4(1.0f);
+		model70 = glm::translate(model70, glm::vec3(-7.0, -2.1, -18.0));
+		model70 = glm::rotate(model70, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+		model70 = glm::rotate(model70, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model70 = glm::scale(model70, glm::vec3(0.8f, 0.8, 0.8f));
+		staticShader->setMat4("model", model70);
 
-		//garza->Draw(*staticShader);
+		alga->Draw(*staticShader);
 
-		////ALGA 7
-		//glm::mat4 model64 = glm::mat4(1.0f);
-		//model64 = glm::translate(model64, glm::vec3(7.65, -0.85, -13.1));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model64 = glm::rotate(model64, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
-		//model64 = glm::scale(model64, glm::vec3(0.8f, 0.8, 0.8f));
-		//staticShader->setMat4("model", model64);
 
-		//garza->Draw(*staticShader);
 
 	}
 
@@ -1344,10 +1338,21 @@ bool Update() {
 
 		// MANATI
 		glm::mat4 modelManati = glm::mat4(1.0f);
-		modelManati = glm::translate(modelManati, glm::vec3(7.0, -1.5, -20.0)); // translate it down so it's at the center of the 
+		modelManati = glm::translate(modelManati, glm::vec3(7.0, -1.4, -17.0)); // translate it down so it's at the center of the 
 		modelManati = glm::rotate(modelManati, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		modelManati = glm::scale(modelManati, glm::vec3(0.07f, 0.07f, 0.07f));
+		modelManati = glm::scale(modelManati, glm::vec3(0.09f, 0.09f, 0.09f));
 		ourShader->setMat4("model", modelManati);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesManati);
+
+		manati->Draw(*ourShader);
+
+		// MANATI BEBE
+		glm::mat4 modelManatiBebe = glm::mat4(1.0f);
+		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(6.0, -1.4, -15.0)); // translate it down so it's at the center of the 
+		modelManatiBebe = glm::rotate(modelManatiBebe, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelManatiBebe = glm::scale(modelManatiBebe, glm::vec3(0.03f, 0.03f, 0.03f));
+		ourShader->setMat4("model", modelManatiBebe);
 
 		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesManati);
 
@@ -1359,6 +1364,28 @@ bool Update() {
 		modelTortuga = glm::rotate(modelTortuga, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelTortuga = glm::scale(modelTortuga, glm::vec3(0.1f, 0.1f, 0.1f));
 		ourShader->setMat4("model", modelTortuga);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesTortuga);
+
+		tortuga->Draw(*ourShader);
+
+		// TORTUGA BEBE
+		glm::mat4 modelTortugaBebe = glm::mat4(1.0f);
+		modelTortugaBebe = glm::translate(modelTortugaBebe, glm::vec3(-4.7, -1.4, -8.0)); // translate it down so it's at the center of the 
+		modelTortugaBebe = glm::rotate(modelTortugaBebe, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelTortugaBebe = glm::scale(modelTortugaBebe, glm::vec3(0.05f, 0.05f, 0.05f));
+		ourShader->setMat4("model", modelTortugaBebe);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesTortuga);
+
+		tortuga->Draw(*ourShader);
+
+		// TORTUGA 2
+		glm::mat4 modelTortuga2 = glm::mat4(1.0f);
+		modelTortuga2 = glm::translate(modelTortuga2, glm::vec3(7.5, -1.5, -18.0)); // translate it down so it's at the center of the 
+		modelTortuga2 = glm::rotate(modelTortuga2, glm::radians(13.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelTortuga2 = glm::scale(modelTortuga2, glm::vec3(0.04f, 0.04f, 0.03f));
+		ourShader->setMat4("model", modelTortuga2);
 
 		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesTortuga);
 
