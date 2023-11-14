@@ -1,6 +1,6 @@
 /*
 * Laboratorio de Computación Gráfica e Interacción Humano-Computadora
-* 06 - Texturizado
+* PROYECTO FINAL
 */
 
 #include <iostream>
@@ -85,6 +85,7 @@ Shader* jellyFishShader;
 Shader* phongShader;
 Shader* fresnelShader;
 Shader* proceduralShader;
+Shader* proceduralShaderObjects;
 
 // Partículas
 Particles particlesSystem(70); // creamos 200 partículas
@@ -235,6 +236,7 @@ bool Start() {
 	nenufarShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/10_fragment_simple.fs");
 	jellyFishShader = new Shader("shaders/14_jellyFishAnimation.vs", "shaders/10_fragment_simple.fs");
 	proceduralShader = new Shader("shaders/12_ProceduralAnimation.vs", "shaders/12_ProceduralAnimation.fs");
+	proceduralShaderObjects = new Shader("shaders/12_ProceduralAnimationObjects.vs", "shaders/12_ProceduralAnimation.fs");
 
 	particleModel = new Model("models/snow/burbuja.fbx");
 
@@ -252,6 +254,7 @@ bool Start() {
 	lataCoca = new Model("models/lataCoca/lataCoca.fbx");
 	lataFanta = new Model("models/lataCoca/lataFanta.fbx");
 	lataSprite = new Model("models/lataCoca/lataSprite.fbx");
+	bolsa = new Model("models/bolsa/bolsa.fbx");
 	ostra = new Model("models/ostra/ostra.fbx");
 	cocodrilo = new Model("models/cocodrilo/cocodrilo.fbx");
 	estrella = new Model("models/estrella/estrella.fbx");
@@ -265,6 +268,7 @@ bool Start() {
 	garza = new Model("models/garza/garza.fbx");
 	alga = new Model("models/alga/alga.fbx");
 	ave = new Model("models/ave/ave.fbx");
+	pez = new Model("models/pez/pez.fbx");
 
 
 
@@ -1338,7 +1342,7 @@ bool Update() {
 
 		// MANATI
 		glm::mat4 modelManati = glm::mat4(1.0f);
-		modelManati = glm::translate(modelManati, glm::vec3(7.0, -1.4, -17.0)); // translate it down so it's at the center of the 
+		modelManati = glm::translate(modelManati, glm::vec3(6.0, -1.4, -17.0)); // translate it down so it's at the center of the 
 		modelManati = glm::rotate(modelManati, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelManati = glm::scale(modelManati, glm::vec3(0.09f, 0.09f, 0.09f));
 		ourShader->setMat4("model", modelManati);
@@ -1349,7 +1353,7 @@ bool Update() {
 
 		// MANATI BEBE
 		glm::mat4 modelManatiBebe = glm::mat4(1.0f);
-		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(6.0, -1.4, -15.0)); // translate it down so it's at the center of the 
+		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(5.0, -1.4, -15.0)); // translate it down so it's at the center of the 
 		modelManatiBebe = glm::rotate(modelManatiBebe, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelManatiBebe = glm::scale(modelManatiBebe, glm::vec3(0.03f, 0.03f, 0.03f));
 		ourShader->setMat4("model", modelManatiBebe);
@@ -1406,6 +1410,99 @@ bool Update() {
 		glm::mat4 view = camera.GetViewMatrix();
 		proceduralShader->setMat4("projection", projection);
 		proceduralShader->setMat4("view", view);
+
+		// BOLSA
+		glm::mat4 modelBolsa = glm::mat4(1.0f);
+		modelBolsa = glm::translate(modelBolsa, glm::vec3(-3.0, -1.6, -15.5)); // translate it down so it's at the center of the 
+		modelBolsa = glm::rotate(modelBolsa, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBolsa = glm::scale(modelBolsa, glm::vec3(0.2f, 0.2f, 0.2f));
+		proceduralShaderObjects->setMat4("model", modelBolsa);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime);
+		proceduralShaderObjects->setFloat("radius", 0.15f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		bolsa->Draw(*proceduralShaderObjects);
+
+		// BOLSA 2
+		glm::mat4 modelBolsa2 = glm::mat4(1.0f);
+		modelBolsa2 = glm::translate(modelBolsa2, glm::vec3(3.0, -1.6, -12.0)); // translate it down so it's at the center of the 
+		modelBolsa2 = glm::rotate(modelBolsa2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBolsa2 = glm::scale(modelBolsa2, glm::vec3(0.1f, 0.1f, 0.1f));
+		proceduralShaderObjects->setMat4("model", modelBolsa2);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 20);
+		proceduralShaderObjects->setFloat("radius", 0.1f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		bolsa->Draw(*proceduralShaderObjects);
+
+		// BOLSA 3
+		glm::mat4 modelBolsa3 = glm::mat4(1.0f);
+		modelBolsa3 = glm::translate(modelBolsa3, glm::vec3(2.0, -1.6, -18.0)); // translate it down so it's at the center of the 
+		modelBolsa3 = glm::rotate(modelBolsa3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBolsa3 = glm::scale(modelBolsa3, glm::vec3(0.25f, 0.25f, 0.25f));
+		proceduralShaderObjects->setMat4("model", modelBolsa3);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 100);
+		proceduralShaderObjects->setFloat("radius", 0.05f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		bolsa->Draw(*proceduralShaderObjects);
+
+
+		// PEZ
+		glm::mat4 modelPez = glm::mat4(1.0f);
+		modelPez = glm::translate(modelPez, glm::vec3(-3.0, -1.0, -10.0)); // translate it down so it's at the center of the 
+		modelPez = glm::rotate(modelPez, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelPez = glm::scale(modelPez, glm::vec3(1.0f, 1.0f, 1.0f));
+		proceduralShaderObjects->setMat4("model", modelPez);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 200);
+		proceduralShaderObjects->setFloat("radius", 0.02f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		pez->Draw(*proceduralShaderObjects);
+
+		// PEZ 2
+		glm::mat4 modelPez2 = glm::mat4(1.0f);
+		modelPez2 = glm::translate(modelPez2, glm::vec3(-2.8, -1.2, -10.0)); // translate it down so it's at the center of the 
+		modelPez2 = glm::rotate(modelPez2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelPez2 = glm::scale(modelPez2, glm::vec3(0.6f, 0.6f, 0.6f));
+		proceduralShaderObjects->setMat4("model", modelPez2);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 200);
+		proceduralShaderObjects->setFloat("radius", 0.02f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		pez->Draw(*proceduralShaderObjects);
+
+		// PEZ 3
+		glm::mat4 modelPez3 = glm::mat4(1.0f);
+		modelPez3 = glm::translate(modelPez3, glm::vec3(0.0, -1.0, -8.2)); // translate it down so it's at the center of the 
+		modelPez3 = glm::rotate(modelPez3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelPez3 = glm::scale(modelPez3, glm::vec3(1.0f, 1.0f, 1.0f));
+		proceduralShaderObjects->setMat4("model", modelPez3);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 200);
+		proceduralShaderObjects->setFloat("radius", 0.02f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		pez->Draw(*proceduralShaderObjects);
+
+		// PEZ 4
+		glm::mat4 modelPez4 = glm::mat4(1.0f);
+		modelPez4 = glm::translate(modelPez4, glm::vec3(0.2, -1.2, -8.0)); // translate it down so it's at the center of the 
+		modelPez4 = glm::rotate(modelPez4, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelPez4 = glm::scale(modelPez4, glm::vec3(0.6f, 0.6f, 0.6f));
+		proceduralShaderObjects->setMat4("model", modelPez4);
+
+		proceduralShaderObjects->setFloat("time", proceduralTime + 200);
+		proceduralShaderObjects->setFloat("radius", 0.02f);
+		proceduralShaderObjects->setFloat("height", 0.0f);
+
+		pez->Draw(*proceduralShaderObjects);
+
 
 		// Aplicamos transformaciones del modelo
 		glm::mat4 model = glm::mat4(1.0f);
