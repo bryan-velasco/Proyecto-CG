@@ -272,6 +272,7 @@ bool Start() {
 	alga = new Model("models/alga/alga.fbx");
 	ave = new Model("models/ave/ave.fbx");
 	pez = new Model("models/pez/pez.fbx");
+	gavilan = new Model("models/gavilan/gavilan.fbx");
 
 
 
@@ -375,6 +376,15 @@ bool Update() {
 		staticShader->setMat4("model", model);
 
 		arena->Draw(*staticShader);
+
+		// GAVILAN
+		glm::mat4 modelGavilan = glm::mat4(1.0f);
+		modelGavilan = glm::translate(modelGavilan, glm::vec3(0.4, -0.19, -13.7)); // translate it down so it's at the center of the 
+		modelGavilan = glm::rotate(modelGavilan, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelGavilan = glm::scale(modelGavilan, glm::vec3(0.4f, 0.4f, 0.4f));
+		staticShader->setMat4("model", modelGavilan);
+
+		gavilan->Draw(*staticShader);
 
 		// MANGLE 1 --> EL DE LA DERECHA (EL PRIMERO DE LA DERECHA)
 		glm::mat4 model1 = glm::mat4(1.0f);
