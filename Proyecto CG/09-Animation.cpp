@@ -9,7 +9,6 @@
 // GLAD: Multi-Language GL/GLES/EGL/GLX/WGL Loader-Generator
 // https://glad.dav1d.de/
 #include <glad/glad.h>
-
 // GLFW: https://www.glfw.org/
 #include <GLFW/glfw3.h>
 
@@ -277,13 +276,14 @@ bool Start() {
 
 
 	WaterGridMesh = new Model("models/agua/aguaBloque.fbx");
+	//WaterGridMesh = new Model("models/agua/agua.fbx");
 	NenufarGridMesh = new Model("models/nenufar/nenufar.fbx");
 
 
 	// CUBO DE FONDO
 	cubeenv = new Model("models/mycube.fbx");
 
-	//SoundEngine->play2D("sound/mar.mp3", true);
+	SoundEngine->play2D("sound/manglar.mp3", true);
 
 	//Inicialización Lancha
 	lancha->SetPose(0.0f, gBones);
@@ -1346,6 +1346,19 @@ bool Update() {
 		boaShader->setFloat("height", 5.0f);
 
 		boa->Draw(*boaShader);
+
+		//Boa
+		glm::mat4 modelBoa1 = glm::mat4(1.0f);
+		modelBoa1 = glm::translate(modelBoa1, glm::vec3(5.0, -2.0, -9.5));
+		modelBoa1 = glm::rotate(modelBoa1, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelBoa1 = glm::scale(modelBoa1, glm::vec3(0.2f, 0.2f, 0.2f));
+		boaShader->setMat4("model", modelBoa1);
+
+		boaShader->setFloat("time", wavesTime * 6);
+		boaShader->setFloat("radius", 5.0f);
+		boaShader->setFloat("height", 5.0f);
+
+		boa->Draw(*boaShader);
 	}
 
 	glUseProgram(0);
@@ -1395,9 +1408,21 @@ bool Update() {
 
 		manati->Draw(*ourShader);
 
+		// MANATI 2
+		glm::mat4 modelManatiGrande = glm::mat4(1.0f);
+		modelManatiGrande = glm::translate(modelManatiGrande, glm::vec3(-3.5, -1.5, -19.0)); // translate it down so it's at the center of the 
+		modelManati = glm::rotate(modelManati, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		modelManatiGrande = glm::scale(modelManatiGrande, glm::vec3(0.07f, 0.07f, 0.07f));
+		ourShader->setMat4("model", modelManatiGrande);
+
+		ourShader->setMat4("gBones", MAX_RIGGING_BONES, gBonesManati);
+
+		manati->Draw(*ourShader);
+
 		// MANATI BEBE
 		glm::mat4 modelManatiBebe = glm::mat4(1.0f);
-		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(5.0, -1.4, -15.0)); // translate it down so it's at the center of the 
+		modelManatiBebe = glm::translate(modelManatiBebe, glm::vec3(5.0, -1.4, -18.0)); // translate it down so it's at the center of the 
 		modelManatiBebe = glm::rotate(modelManatiBebe, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelManatiBebe = glm::scale(modelManatiBebe, glm::vec3(0.03f, 0.03f, 0.03f));
 		ourShader->setMat4("model", modelManatiBebe);
