@@ -29,21 +29,21 @@ public:
 		for (unsigned int i = 0; i < numParticles; i++) {
 			Particle P;
 
-			double min_valuex = -8.0;
-			double max_valuex = 8.0;
+			double min_valuex = -53.0;
+			double max_valuex = 53.0;
 			double rangex = max_valuex - min_valuex;
 			double random_valuex = ((double)rand() / RAND_MAX) * rangex + min_valuex;
 			P.p0.x = random_valuex;
 
 			double min_valuey = -2.0;
-			double max_valuey = -0.5;
+			double max_valuey = 14.0;
 			double rangey = max_valuey - min_valuey;
 			double random_valuey = ((double)rand() / RAND_MAX) * rangey + min_valuey;
 			P.p0.y = random_valuey;
 
 
-			double min_valuez = -21.73;
-			double max_valuez = -5.5;
+			double min_valuez = -115.73;
+			double max_valuez = 115.5;
 			double rangez = max_valuez - min_valuez;
 			double random_valuez = ((double)rand() / RAND_MAX) * rangez + min_valuez;
 			P.p0.z = random_valuez;
@@ -73,7 +73,7 @@ public:
 			P->velocity += P->acceleration * deltaTime;
 			P->position += P->velocity * deltaTime;
 
-			if (P->position.y >= -0.5) {
+			if (P->position.y >= 14.0) {
 				// Cuando una partícula llega a la parte superior, regresa a la posición inicial en la parte inferior
 				P->position = P->p0;
 				P->velocity = glm::vec3(0.0f, 0.0f, 0.0f);  // Resetea la velocidad

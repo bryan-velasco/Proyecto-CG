@@ -71,14 +71,14 @@ public:
     {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD) {
-            Position.x += Front.x * velocity * 3.0;
-            Position.y += Front.y * velocity * 3.0;
-            Position.z += Front.z * velocity * 3.0;
+            Position.x += Front.x * velocity * 10.0;
+            Position.y += Front.y * velocity * 10.0;
+            Position.z += Front.z * velocity * 10.0;
         }                                      
         if (direction == BACKWARD){            
-            Position.x -= Front.x * velocity * 3.0;
-            Position.y += Front.y * velocity * 3.0;
-            Position.z -= Front.z * velocity * 3.0;
+            Position.x -= Front.x * velocity * 10.0;
+            Position.y += Front.y * velocity * 10.0;
+            Position.z -= Front.z * velocity * 10.0;
         }
         if (direction == LEFT)
             Position -= Right * velocity;

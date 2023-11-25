@@ -20,9 +20,9 @@ void main()
     vec4 PosL = vec4(aPos, 1.0f);
 
     // Movimiento circular
-    PosL.x += 20 * radius * sin(2 * time) * cos(2 * time);
-    PosL.y += 20 * radius * sin(2 * time);
-    PosL.z += radius * cos(2 * time);
+    PosL.x += 100 * radius * sin(time) * cos(time);
+    PosL.y += 100 * radius * sin(time);
+    PosL.z += radius * cos(time);
 
     // Agregar movimiento de arriba a abajo
     PosL.y += height * sin(time);  // Ajusta la amplitud según sea necesario
