@@ -1745,8 +1745,10 @@ void processInput(GLFWwindow* window)
 	WaterGridMesh = new Model("models/agua/agua.fbx");
 
 	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)//CONTAMINADA
-	WaterGridMesh = new Model("models/agua/aguaBloque.fbx");
+	WaterGridMesh = new Model("models/agua/medioContaminada.fbx");
 
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)//CONTAMINADA
+		WaterGridMesh = new Model("models/agua/contaminada.fbx");
 
 	//CUBE CUBO DE FONDO
 	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
