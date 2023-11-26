@@ -67,6 +67,16 @@ float elapsedTime = 0.0f;
 
 float	  basura_offset = 0.0f;
 
+//BOLSA
+float	  bolsa_offset = 0.0f;
+float	  bolsa1_offset = 0.0f;
+float	  bolsa2_offset = 0.0f;
+
+
+//LATAS
+float	  lata_offset = 0.0f;
+float	  lata1_offset = 0.0f;
+float	  lata2_offset = 0.0f;
 
 float     rotateCharacter = 0.0f;
 glm::vec3 position(0.0f, 0.0f, 0.0f);
@@ -133,12 +143,14 @@ Model* lancha;		//20
 Model* arena;		//21
 Model* roca;		//22
 Model* ave;			//23
+Model* lancha2;		//24
 
 Model* WaterGridMesh;
 Model* NenufarGridMesh;
 
 Model* cubeenv;
-
+Model* cubeenv2;
+Model* cubeenv3;
 
 
 
@@ -275,16 +287,17 @@ bool Start() {
 	ave = new Model("models/ave/ave.fbx");
 	pez = new Model("models/pez/pez.fbx");
 	gavilan = new Model("models/gavilan/gavilan.fbx");
-
+	lancha2 = new Model("models/lancha2/lancha2.fbx");
 
 
 	WaterGridMesh = new Model("models/agua/aguaBloque.fbx");
-	//WaterGridMesh = new Model("models/agua/agua.fbx");
 	NenufarGridMesh = new Model("models/nenufar/nenufar.fbx");
 
 
 	// CUBO DE FONDO
 	cubeenv = new Model("models/mycube.fbx");
+
+
 
 	//SoundEngine->play2D("sound/manglar.mp3", true);
 
@@ -376,7 +389,7 @@ bool Update() {
 		model = glm::translate(model, glm::vec3(0.47129, -2.1, -20.738553)); // translate it down so it's at the center of the 
 		model = glm::rotate(model, glm::radians(-270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		model = glm::scale(model, glm::vec3(20.5f,22.5f, 20.5f));
+		model = glm::scale(model, glm::vec3(20.5f, 22.5f, 20.5f));
 		staticShader->setMat4("model", model);
 
 		arena->Draw(*staticShader);
@@ -393,14 +406,14 @@ bool Update() {
 
 		// MANGLE 2
 		glm::mat4 modelManglar = glm::mat4(1.0f);
-		modelManglar = glm::translate(modelManglar, glm::vec3(-99.0, 53.1,0.0));
+		modelManglar = glm::translate(modelManglar, glm::vec3(-99.0, 53.1, 0.0));
 		modelManglar = glm::rotate(modelManglar, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelManglar = glm::rotate(modelManglar, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelManglar = glm::scale(modelManglar, glm::vec3(70.5f, 1.5f, 70.5f));
 		staticShader->setMat4("model", modelManglar);
 
 		mangle->Draw(*staticShader);
-		
+
 		// MANGLE 3
 		glm::mat4 modelManglar1 = glm::mat4(1.0f);
 		modelManglar1 = glm::translate(modelManglar1, glm::vec3(99.0, 53.1, 0.0));
@@ -436,7 +449,7 @@ bool Update() {
 
 		// LATA DE COCA 1
 		glm::mat4 model12 = glm::mat4(1.0f);
-		model12 = glm::translate(model12, glm::vec3(0.047129, -1.0 + basura_offset	, 45.738553));
+		model12 = glm::translate(model12, glm::vec3(0.047129, -1.0 + basura_offset, 45.738553));
 		model12 = glm::rotate(model12, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model12 = glm::scale(model12, glm::vec3(4.0f, 4.0f, 4.0f));
 		staticShader->setMat4("model", model12);
@@ -647,7 +660,7 @@ bool Update() {
 		staticShader->setMat4("model", model33);
 
 		flamingo->Draw(*staticShader);
-		
+
 
 		//FLAMINGO 4
 		glm::mat4 model34 = glm::mat4(1.0f);
@@ -676,7 +689,7 @@ bool Update() {
 
 		flamingo->Draw(*staticShader);
 
-		
+
 		//FLAMINGO 7
 		glm::mat4 model37 = glm::mat4(1.0f);
 		model37 = glm::translate(model37, glm::vec3(-53.8, -3.5, 10.0));
@@ -994,6 +1007,74 @@ bool Update() {
 		alga->Draw(*staticShader);
 
 
+		//LANCHA 6
+		glm::mat4 model71 = glm::mat4(1.0f);
+		model71 = glm::translate(model71, glm::vec3(50.0, 17.0, -30.0));
+		model71 = glm::rotate(model71, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+		model71 = glm::rotate(model71, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model71 = glm::scale(model71, glm::vec3(8.8f, 7.8, 7.6f));
+		staticShader->setMat4("model", model71);
+
+		lancha2->Draw(*staticShader);
+
+
+		// BOLSA 1
+		glm::mat4 model72 = glm::mat4(1.0f);
+		model72 = glm::translate(model72, glm::vec3(0.0 + bolsa1_offset, -2.0 + bolsa_offset, 0.0 + bolsa2_offset));
+		model72 = glm::rotate(model72, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+		model72 = glm::rotate(model72, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model72 = glm::scale(model72, glm::vec3(0.6f, 0.6f, 0.6f));
+		staticShader->setMat4("model", model72);
+
+		bolsa->Draw(*staticShader);
+
+		// BOLSA 2
+		glm::mat4 model73 = glm::mat4(1.0f);
+		model73 = glm::translate(model73, glm::vec3(3.0 + bolsa1_offset, -2.0 + bolsa_offset, 0.0 + bolsa2_offset));
+		model73 = glm::rotate(model73, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+		model73 = glm::scale(model73, glm::vec3(0.7f, 0.7f, 0.7f));
+		staticShader->setMat4("model", model73);
+
+		bolsa->Draw(*staticShader);
+
+		// BOLSA 3
+		glm::mat4 model74 = glm::mat4(1.0f);
+		model74 = glm::translate(model74, glm::vec3(2.0 + bolsa1_offset, -2.0 + bolsa_offset, 2.0 + bolsa2_offset));
+		model74 = glm::rotate(model74, glm::radians(-90.0f), glm::vec3(1.0, 0.0f, 0.0f));
+		model74 = glm::rotate(model74, glm::radians(-90.0f), glm::vec3(0.0f, .0f, 1.0f));
+		model74 = glm::scale(model74, glm::vec3(0.6f, 0.6f, 0.6));
+		staticShader->setMat4("model", model74);
+
+		bolsa->Draw(*staticShader);
+
+		// LATA DE COCA 3
+		glm::mat4 model75 = glm::mat4(1.0f);
+		model75 = glm::translate(model75, glm::vec3(-70.0 + lata1_offset, -1.0 + lata_offset, 90.0 + lata2_offset));
+		model75 = glm::rotate(model75, glm::radians(-80.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model75 = glm::scale(model75, glm::vec3(4.0f, 4.0f, 4.0f));
+		staticShader->setMat4("model", model75);
+
+		lataCoca->Draw(*staticShader);
+
+
+		// LATA DE FANTA 3
+		glm::mat4 model76 = glm::mat4(1.0f);
+		model76 = glm::translate(model76, glm::vec3(-73.0 + lata1_offset,  -1.0 + lata_offset, 92.0 + lata2_offset));
+		model76 = glm::rotate(model76, glm::radians(-50.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model76 = glm::scale(model76, glm::vec3(4.0f, 4.0f, 4.0f));
+		staticShader->setMat4("model", model76);
+
+		lataFanta->Draw(*staticShader);
+
+		// LATA DE SPRITE 3
+		glm::mat4 model77 = glm::mat4(1.0f);
+		model77 = glm::translate(model77, glm::vec3(-71.5 + lata1_offset, -1.0 + lata_offset, 90.0 + lata2_offset));
+		model77 = glm::rotate(model77, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model77 = glm::rotate(model77, glm::radians(-40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model77 = glm::scale(model77, glm::vec3(4.0f, 4.0f, 4.0f));
+		staticShader->setMat4("model", model77);
+
+		lataSprite->Draw(*staticShader);
 
 	}
 
@@ -1012,11 +1093,13 @@ bool Update() {
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(100.0f, 100.0f, 100.0f));	// it's a bit too big for our scene, so scale it down
+		model = glm::scale(model, glm::vec3(100.0f, 100.0f, 105.0f));	// it's a bit too big for our scene, so scale it down
 		staticShader->setMat4("model", model);
 
 		cubeenv->Draw(*staticShader);
 	}
+
+	
 
 
 	// Animación de partículas
@@ -1607,10 +1690,74 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 
+
+	//BASURA PROCESURAL
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-		basura_offset += 0.01f;
+		basura_offset += 0.05f;
 	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-		basura_offset -= 0.01f;
+		basura_offset -= 0.05f;
+
+
+
+	//BASURA ESTATICA ARRIBA ABAJO
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+		bolsa_offset += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+		bolsa_offset -= 0.1f;
+
+	//BASURA ESTATICA IZQUIERDA DERECHA
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+		bolsa1_offset -= 0.2f;
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+		bolsa1_offset += 0.2f;
+
+	//BASURA ESTATICA ATRAS ADELANTE
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+		bolsa2_offset -= 0.2f;
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+		bolsa2_offset += 0.2f;
+
+
+
+	//LATA ESTATICA ARRIBA ABAJO
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+		lata_offset += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+		lata_offset -= 0.1f;
+
+	//LATA ESTATICA IZQUIERDA DERECHA
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		lata1_offset -= 0.2f;
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		lata1_offset += 0.2f;
+
+	//LATA ESTATICA ATRAS ADELANTE
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+		lata2_offset -= 0.2f;
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+		lata2_offset += 0.2f;
+
+
+	
+
+	//AGUA CONTAMINADA Y NO CONTAMINADA
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) //LIMPIA
+	WaterGridMesh = new Model("models/agua/agua.fbx");
+
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)//CONTAMINADA
+	WaterGridMesh = new Model("models/agua/aguaBloque.fbx");
+
+
+	//CUBE CUBO DE FONDO
+	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
+		cubeenv = new Model("models/mycube.fbx");
+		
+	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
+		cubeenv = new Model("models/mycube2.fbx");
+
+	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+		cubeenv = new Model("models/mycube3.fbx");
+	
 
 }
 
