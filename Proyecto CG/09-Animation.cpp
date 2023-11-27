@@ -17,6 +17,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 // Model loading classes
 #include <shader_m.h>
 #include <camera.h>
@@ -27,10 +28,7 @@
 #include <particles.h>
 #include <irrKlang.h>
 
-#include <glm/glm.hpp>
 using namespace irrklang;
-
-#include <glm/glm.hpp>
 
 // Max number of bones
 #define MAX_RIGGING_BONES 100
@@ -301,7 +299,10 @@ bool Start() {
 
 
 
-	//SoundEngine->play2D("sound/manglar.mp3", true);
+	SoundEngine->play2D("sound/manglar.mp3", true);
+	//SoundEngine->play2D("sound/manati.mp3", true);
+
+
 
 	//Inicialización Lancha
 	lancha->SetPose(0.0f, gBones);
@@ -1762,20 +1763,11 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
 		cubeenv = new Model("models/mycube3.fbx");
 
-	//AUDIOS
-	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) //MANGLAR
-		SoundEngine->play2D("sound/manglar.mp3", true);
 
 
-	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) //MANATI
-		SoundEngine->play2D("sound/manati.mp3", true);
-
-
-	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)// SOFTWARE
-		SoundEngine->play2D("sound/software.mp3", true);
+	}
 	
 
-}
 
 // glfw: Actualizamos el puerto de vista si hay cambios del tamaño
 // de la ventana
