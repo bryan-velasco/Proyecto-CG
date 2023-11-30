@@ -1763,7 +1763,22 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
 		cubeenv = new Model("models/mycube3.fbx");
 
-
+	//PROPIEDADES DE LA CÁMARA
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
+		camera.Position = glm::vec3(98.0f, 90.0f, 95.0f);
+		camera.Front = glm::vec3(-1.0f, -1.0f, -1.0f);
+		camera.Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS) {
+		camera.Position = glm::vec3(98.0f, 90.0f, -95.0f);
+		camera.Front = glm::vec3(-1.0f, -1.0f, 1.0f);
+		camera.Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
+		camera.Position = glm::vec3(0.0f, 2.0f, 10.0f);
+		camera.Front = glm::vec3(0.0f, 0.0f, -1.0f);
+		camera.Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	}
 
 	}
 	

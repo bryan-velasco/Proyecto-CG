@@ -77,7 +77,7 @@ public:
         }                                      
         if (direction == BACKWARD){            
             Position.x -= Front.x * velocity * 10.0;
-            Position.y += Front.y * velocity * 10.0;
+            Position.y -= Front.y * velocity * 10.0;
             Position.z -= Front.z * velocity * 10.0;
         }
         if (direction == LEFT)
