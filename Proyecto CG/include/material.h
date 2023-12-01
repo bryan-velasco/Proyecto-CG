@@ -17,10 +17,10 @@ public:
 	float     transparency;
 
 	Material() {
-		ambient = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f); 
+		ambient = glm::vec4(0.3f, 0.3f, 0.2f, 1.0f); 
 		diffuse = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-		specular = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f); 
-		transparency = 0.5f;
+		specular = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f); 
+		transparency = 1.0f;
 	}
 	~Material() {}
 
