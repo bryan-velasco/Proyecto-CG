@@ -113,6 +113,11 @@ float alpha = 0.0f;
 // Cubemap
 CubeMap* mainCubeMap;
 
+// Materiales
+Material material01;
+Light    light01;
+Light    light02;
+
 // Audio
 ISoundEngine* SoundEngine = createIrrKlangDevice();
 
@@ -149,8 +154,6 @@ Model* WaterGridMesh;
 Model* NenufarGridMesh;
 
 Model* cubeenv;
-Model* cubeenv2;
-Model* cubeenv3;
 
 
 
@@ -245,6 +248,9 @@ bool Start() {
 	// Compilación y enlace de shaders
 	ourShader = new Shader("shaders/10_vertex_skinning-IT.vs", "shaders/10_fragment_skinning-IT.fs");
 	staticShader = new Shader("shaders/10_vertex_simple.vs", "shaders/10_fragment_simple.fs");
+	phongShader = new Shader("shaders/11_BasicPhongShader.vs", "shaders/11_BasicPhongShader.fs");
+	fresnelShader = new Shader("shaders/11_Fresnel.vs", "shaders/11_Fresnel.fs");
+
 	cubemapShader = new Shader("shaders/10_vertex_cubemap.vs", "shaders/10_fragment_cubemap.fs");
 	particlesShader = new Shader("shaders/13_particles.vs", "shaders/13_particles.fs");
 	wavesShader = new Shader("shaders/13_wavesAnimation.vs", "shaders/13_wavesAnimation.fs");
@@ -370,6 +376,48 @@ bool Update() {
 	glUseProgram(0);
 
 
+	//MODELO DE ILUMINACIÓN DE PHONG
+	{
+		// Activamos el shader de Phong
+		phongShader->use();
+
+		// Activamos para objetos transparentes
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Aplicamos transformaciones de proyección y cámara (si las hubiera)
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		phongShader->setMat4("projection", projection);
+		phongShader->setMat4("view", view);
+
+		// ARENA
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.47129, -2.1, -20.738553));
+		model = glm::rotate(model, glm::radians(-270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.5f, 22.5f, 20.5f));
+		staticShader->setMat4("model", model);		
+
+		// Configuramos propiedades de fuentes de luz
+		phongShader->setVec4("LightColor", light01.Color);
+		phongShader->setVec4("LightPower", light01.Power);
+		phongShader->setInt("alphaIndex", light01.alphaIndex);
+		phongShader->setFloat("distance", light01.distance);
+		phongShader->setVec3("lightPosition", light01.Position);
+		phongShader->setVec3("lightDirection", light01.Direction);
+		phongShader->setVec3("eye", camera.Position);
+
+		// Aplicamos propiedades materiales
+		phongShader->setVec4("MaterialAmbientColor", material01.ambient);
+		phongShader->setVec4("MaterialDiffuseColor", material01.diffuse);
+		phongShader->setVec4("MaterialSpecularColor", material01.specular);
+		phongShader->setFloat("transparency", material01.transparency);
+
+		arena->Draw(*phongShader);
+	}
+
+	glUseProgram(0);
+
 	// MANGLAR
 	{
 		// Activamos el shader del plano
@@ -387,15 +435,7 @@ bool Update() {
 
 
 		////////////////////////MODELOS ESTATICOS/////////////////////////////////////////////
-		// ARENA
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.47129, -2.1, -20.738553)); // translate it down so it's at the center of the 
-		model = glm::rotate(model, glm::radians(-270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		model = glm::scale(model, glm::vec3(20.5f, 22.5f, 20.5f));
-		staticShader->setMat4("model", model);
-
-		arena->Draw(*staticShader);
+		
 
 		// MANGLE 1 
 		glm::mat4 model01 = glm::mat4(1.0f);
@@ -1694,7 +1734,7 @@ void processInput(GLFWwindow* window)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 
 
-	//BASURA PROCESURAL
+	//BASURA PROCEDURAL
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
 		basura_offset += 0.05f;
 	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
